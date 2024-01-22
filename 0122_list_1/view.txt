@@ -1,0 +1,33 @@
+answers = []
+for tc in range(10) :
+    N = int(input())
+    buildings = list(map(int, input().split()))
+    count = 0
+    
+    if N < 5 :
+        answers.append(0)
+        continue
+        
+    for i in range(2, N - 2) :
+        building_height = buildings[i]
+
+        left_first_building = buildings[i - 1]
+        left_second_building = buildings[i - 2]
+        if building_height <= left_first_building or building_height <= left_second_building :
+            continue
+
+        right_first_building = buildings[i + 1]
+        right_second_building = buildings[i + 2]
+        if building_height <= right_first_building or building_height <= right_second_building :
+            continue
+
+        largest_block = max(left_first_building, left_second_building, right_first_building, right_second_building)
+
+        max_sight = building_height - largest_block
+        count += max_sight
+
+    answers.append(count)
+
+for i in range(1, 11) :
+    print("#{} ".format(i), end="")
+    print(answers[i - 1])
