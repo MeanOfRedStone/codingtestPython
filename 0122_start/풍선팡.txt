@@ -1,0 +1,40 @@
+T = int(input())
+
+dx = [0, 1, 0, -1]
+dy = [1, 0, -1, 0]
+
+answers = []
+for tc in range(T) :
+    N, M = map(int, input().split(" "))
+
+    board = []
+    for i in range(N) :
+        board.append(list(map(int, input().split())))
+
+    max_flower = 0
+
+    for i in range(N) :
+        for j in range(M) :
+            now_flower = board[i][j]
+            now_sum = now_flower
+
+            for direction in range(4) :
+                next_row = i + dx[direction]
+                next_col = j + dy[direction]
+
+                if next_row < 0 or next_row > N - 1 :
+                    continue
+                if next_col < 0 or next_col > M - 1 :
+                    continue
+
+                next_flower = board[next_row][next_col]
+
+                now_sum += next_flower
+
+            max_flower = max(max_flower, now_sum)
+
+    answers.append(max_flower)
+
+for i in range(1, T + 1) :
+    print("#{} ".format(i), end="")
+    print(answers[i-1])
