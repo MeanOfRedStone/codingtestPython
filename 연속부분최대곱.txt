@@ -1,0 +1,26 @@
+N = int(input())
+
+numbers = []
+
+for i in range(N) :
+    numbers.append(float(input()))
+
+answer = 0
+for i in range(N) :
+    number = numbers[i]
+    index = i
+    times = number
+    largest_number = times
+
+    while True :
+        index += 1
+        if index == N :
+            break
+
+        next_number = numbers[index]
+        times = times * next_number
+        largest_number = max(largest_number, times)
+
+    answer = max(answer, largest_number)
+
+print(f"{answer:.3f}")
