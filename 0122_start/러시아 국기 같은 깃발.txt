@@ -1,0 +1,57 @@
+def find_combination(row) :
+    combination = []
+
+    for i in range(1, row) :
+        for j in range(1, row) :
+            for k in range(1, row) :
+                if i + j + k == row :
+                    combination.append([i, j, k])
+
+    return combination
+
+T = int(input())
+
+answers = []
+for tc in range(T) :
+    N, M = map(int, input().split(" "))
+    board = []
+
+    for i in range(N) :
+        board.append(list(input()))
+
+    new_color_count = 2500
+
+    combination = find_combination(N)
+
+    for element in combination :
+        white_goal = element[0]
+        blue_goal = element[1]
+        red_goal = element[2]
+
+        # print("white goal : {} blue goal : {} red goal : {}".format(white_goal, blue_goal, red_goal))
+        color_count = 0
+        for i in range(0, white_goal) :
+            for j in range(M) :
+                now_color = board[i][j]
+                if now_color != "W" :
+                    color_count += 1
+
+        for i in range(white_goal, white_goal + blue_goal) :
+            for j in range(M) :
+                now_color = board[i][j]
+                if now_color != "B":
+                    color_count += 1
+
+        for i in range(white_goal + blue_goal, white_goal + blue_goal + red_goal) :
+            for j in range(M) :
+                now_color = board[i][j]
+                if now_color != "R":
+                    color_count += 1
+
+        new_color_count = min(new_color_count, color_count)
+
+    answers.append(new_color_count)
+
+for i in range(1, T + 1) :
+    print("#{} ".format(i), end="")
+    print(answers[i-1])
