@@ -1,0 +1,31 @@
+answers = []
+for tc in range(10) :
+    N = int(input())
+    boxes = list(map(int, input().split()))
+
+    highest_height = max(boxes)
+    lowest_height = min(boxes)
+    highest_index = boxes.index(highest_height)
+    lowest_index = boxes.index(lowest_height)
+
+    while True :
+        if N == 0 :
+            break
+
+        boxes[highest_index] -= 1
+        boxes[lowest_index] += 1
+
+        N -= 1
+
+        highest_height = max(boxes)
+        lowest_height = min(boxes)
+        highest_index = boxes.index(highest_height)
+        lowest_index = boxes.index(lowest_height)
+
+    difference = highest_height - lowest_height
+    answers.append(difference)
+
+
+for i in range(1, 11) :
+    print("#{} ".format(i), end="")
+    print(answers[i - 1])
