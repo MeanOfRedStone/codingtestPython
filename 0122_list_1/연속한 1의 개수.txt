@@ -1,0 +1,24 @@
+T = int(input())
+
+answers = []
+for tc in range(T) :
+    N = int(input())
+    numbers = list(input())
+    longest_number = 0
+    count = 0
+    for i in range(len(numbers)) :
+        now_character = numbers[i]
+
+        if now_character == "1" :
+            count += 1
+            longest_number = max(longest_number, count)
+            continue
+
+        count = 0
+
+    answers.append(longest_number)
+
+
+for i in range(1, T + 1) :
+    print("#{} ".format(i), end="")
+    print(answers[i-1])
