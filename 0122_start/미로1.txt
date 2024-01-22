@@ -1,0 +1,52 @@
+dx = [0, 1, 0 ,-1]
+dy = [1, 0, -1, 0]
+
+def find_last(row, col) :
+    global dx
+    global dy
+    global board
+    global is_finished
+
+    if board[row][col] == 5 :
+        return
+
+    if board[row][col] == 3 :
+        is_finished = 1
+
+    board[row][col] = 5
+
+    for i in range(4) :
+        next_row = row + dx[i]
+        next_col = col + dy[i]
+
+        if next_row < 0 or next_row >= 16 or next_col < 0 or next_col >= 16 :
+            continue
+
+        if board[next_row][next_col] == 1 :
+            continue
+
+        find_last(next_row, next_col)
+
+
+answers = []
+is_finished = 0
+visited = []
+board = []
+
+for i in range(10) :
+    N = int(input())
+
+    board = []
+    for i in range(16) :
+        board.append(list(map(int, input())))
+
+    is_finished = 0
+    for i in range(16) :
+        for j in range(16) :
+            if board[i][j] == 2 :
+                find_last(i, j)
+
+    answers.append(is_finished)
+
+for i in range(1, 11) :
+    print(f"#{i} {answers[i - 1]}")
