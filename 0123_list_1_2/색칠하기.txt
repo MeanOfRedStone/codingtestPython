@@ -1,0 +1,56 @@
+T = int(input())
+
+def paint_color() :
+    global board
+    global color_info
+
+    for info in color_info :
+        start_row = info[0]
+        end_row = info[2]
+        start_col = info[1]
+        end_col = info[3]
+        color = info[4]
+
+        for i in range(start_row, end_row + 1) :
+            for j in range(start_col, end_col + 1) :
+                now_location = board[i][j]
+                if now_location == 0 :
+                    board[i][j] = color
+                    continue
+                if now_location == color :
+                    continue
+                board[i][j] += color
+
+    calculate_purple()
+
+def calculate_purple() :
+    global board
+    global answers
+
+    count = 0
+    for i in range(10) :
+        for j in range(10) :
+            if board[i][j] >= 3 :
+                count += 1
+
+    answers.append(count)
+
+
+answers = []
+color_info = []
+board = []
+N = 0
+
+for tc in range(T) :
+    board = [[0 for row in range(10)]for col in range(10)]
+
+    N = int(input())
+    color_info = []
+    for i in range(N) :
+        color_info.append(list(map(int, input().split())))
+
+    paint_color()
+
+
+for i in range(1, T + 1) :
+    print(f"#{i} {answers[i - 1]}")
