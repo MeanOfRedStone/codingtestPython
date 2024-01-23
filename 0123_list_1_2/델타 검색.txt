@@ -1,0 +1,49 @@
+T = int(input())
+
+dx = [0, 1, 0, -1]
+dy = [1, 0, -1, 0]
+
+def delta_search() :
+    global board
+    global N
+
+    difference_sum = 0
+
+    for i in range(N):
+        for j in range(N) :
+            difference_sum += calculate_difference(i, j)
+
+    return difference_sum
+
+def calculate_difference(row, col) :
+    global board
+    global N
+
+    difference = 0
+
+    for i in range(4) :
+        next_row = row + dx[i]
+        next_col = col + dy[i]
+
+        if next_row < 0 or next_row == N or next_col < 0 or next_col == N :
+            continue
+        difference += abs(board[next_row][next_col] - board[row][col])
+
+    return difference
+
+
+
+answers = []
+board = []
+N = 0
+
+for tc in range(T) :
+    N = int(input())
+    board = []
+    for i in range(N) :
+        board.append(list(map(int, input().split())))
+
+    answers.append(delta_search())
+
+for i in range(1, T + 1) :
+    print(f"#{i} {answers[i - 1]}")
