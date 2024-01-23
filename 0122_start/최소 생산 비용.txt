@@ -1,0 +1,42 @@
+def find_combination(factory, price) :
+    global lowest_price
+    global N
+    global visited
+
+    if factory == N :
+        lowest_price = min(lowest_price, price)
+        return
+
+    if price > lowest_price :
+        return
+
+    for next_index in range(N) :
+        if visited[next_index] == 0 :
+            visited[next_index] = 1
+            find_combination(factory + 1, price + factories[factory][next_index])
+            visited[next_index] = 0
+
+
+
+T = int(input())
+N = 0
+lowest_price = 1500
+factories = []
+answers = []
+visited = []
+
+for tc in range(1, T + 1) :
+    # T <= 50 , N <= 15
+    N = int(input())
+    factories = []
+    lowest_price = 1500
+    for i in range(N) :
+        factories.append(list(map(int, input().split())))
+
+    visited = [0 for i in range(N)]
+    find_combination(0, 0)
+
+    answers.append(lowest_price)
+
+for i in range(1, T + 1) :
+    print(f"#{i} {answers[i - 1]}")
