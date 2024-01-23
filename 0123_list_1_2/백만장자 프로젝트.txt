@@ -1,0 +1,25 @@
+T = int(input())
+
+answers = []
+for tc in range(T) :
+    # 알 수 있는 매매가의 개수
+    N = int(input())
+    # 매매가는 10_000 이하
+    price_lst = list(map(int, input().split()))
+
+    profit = 0
+    sell_lst = []
+
+    highest_price = max(price_lst)
+
+    for i in range(len(price_lst)) :
+        price = price_lst[i]
+        profit += highest_price - price
+
+        if price == highest_price :
+            if price_lst[i+1 : ] :
+                highest_price = max(price_lst[i + 1:])
+    answers.append(profit)
+
+for i in range(1, T + 1) :
+    print(f"#{i} {answers[i - 1]}")
