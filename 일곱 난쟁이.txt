@@ -1,0 +1,40 @@
+def dwarves_combination(index, depth) :
+    global combination
+
+    if depth == 7 :
+        calculate_combination(combination)
+
+    combination.append(index)
+
+    for i in range(index, 10) :
+        if i == index :
+            continue
+        dwarves_combination(i, depth + 1)
+
+    combination.pop()
+
+def calculate_combination(combination) :
+    global dwarves
+    global answer
+
+    sum = 0
+    real_dwarves = []
+    for index in combination :
+        sum += dwarves[index]
+        real_dwarves.append(dwarves[index])
+
+    if sum == 100 :
+        real_dwarves.sort()
+        for dwarf in real_dwarves :
+            print(dwarf)
+        exit()
+
+dwarves = []
+
+for i in range(9) :
+    dwarves.append(int(input()))
+
+combination = []
+for i in range(3) :
+    dwarves_combination(i, 0)
+
