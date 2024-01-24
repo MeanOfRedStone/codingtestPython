@@ -1,0 +1,30 @@
+# 색종이의 장수
+N = int(input())
+papers = []
+for i in range(N) :
+    papers.append(list(map(int, input().split())))
+
+board = [[-1 for i in range(1001)] for j in range(1001)]
+
+for i in range(len(papers)) :
+    paper = papers[i]
+    start_col = paper[0]
+    start_row = paper[1]
+    width = paper[2]
+    height = paper[3]
+
+    for row in range(start_row, start_row + height) :
+        for col in range(start_col, start_col + width) :
+            board[row][col] = i
+
+areas = [0] * N
+
+for i in range(1001) :
+    for j in range(1001) :
+        block = board[i][j]
+
+        if block != -1 :
+            areas[block] += 1
+
+for area in areas :
+    print(area)
