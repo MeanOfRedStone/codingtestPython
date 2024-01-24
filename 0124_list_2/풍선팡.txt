@@ -1,0 +1,38 @@
+T = int(input())
+ 
+dx = [0, 1, 0 , -1]
+dy = [1, 0, -1, 0]
+answers = []
+ 
+for tc in range(T) :
+    N, M = map(int, input().split(" "))
+ 
+    ballons = []
+    for i in range(N) :
+        ballons.append(list(map(int, input().split())))
+ 
+    largest_pollen = 0
+ 
+    for i in range(N) :
+        for j in range(M) :
+            chance = ballons[i][j]
+            pollen = ballons[i][j]
+            for k in range(4) :
+                count = 0
+                next_row = i
+                next_col = j
+                while True :
+                    if count == chance :
+                        break
+                    count += 1
+                    next_row = next_row + dx[k]
+                    next_col = next_col + dy[k]
+                    if next_row < 0 or next_row >= N or next_col < 0 or next_col >= M :
+                        continue
+                    pollen += ballons[next_row][next_col]
+            largest_pollen = max(largest_pollen, pollen)
+ 
+    answers.append(largest_pollen)
+ 
+for i in range(1, T + 1) :
+    print(f"#{i} {answers[i - 1]}")
