@@ -1,0 +1,35 @@
+H, W = map(int, input().split(" "))
+
+def weather(row, col) :
+    global forecast
+    global W
+
+    minute = 0
+    next_col = col
+    while True:
+        next_col = next_col + 1
+        if next_col == W :
+            break
+        minute += 1
+        forecast[row][next_col] = minute
+
+# 구름이 있는 경우 : 'c' 구름이 없는 경우 : '.'
+city = []
+for i in range(H) :
+    city.append(list(input()))
+
+
+# 구름은 col += 1의 형태로 이동
+forecast = [[-1 for i in range(W)] for j in range(H)]
+
+for i in range(H) :
+    for j in range(W) :
+        block = city[i][j]
+        if block == "c" :
+            forecast[i][j] = 0
+            weather(i, j)
+
+for row in forecast :
+    for block in row :
+        print(block, end = " ")
+    print()
