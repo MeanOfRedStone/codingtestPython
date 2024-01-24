@@ -1,0 +1,88 @@
+T = int(input())
+
+
+def search_sudoku():
+    global puzzle
+    global is_answer
+    global answers
+
+    is_answer = 1
+
+    for i in range(9):
+        check_row(i)
+        check_col(i)
+        if is_answer == 0 :
+            break
+    if is_answer == 1:
+        check_square()
+
+    answers.append(is_answer)
+
+
+def check_row(row):
+    global is_answer
+    global puzzle
+
+    visited = [0 for i in range(9)]
+
+    for i in range(9):
+        block = puzzle[row][i]
+
+        if visited[block - 1] == 0:
+            visited[block - 1] = 1
+            continue
+        is_answer = 0
+        return
+
+
+def check_col(col):
+    global is_answer
+    global puzzle
+
+    visited = [0 for i in range(9)]
+
+    for i in range(9):
+        block = puzzle[i][col]
+
+        if visited[block - 1] == 0:
+            visited[block - 1] = 1
+            continue
+        is_answer = 0
+        return
+
+
+def check_square():
+    global is_answer
+    global puzzle
+
+    for k in range(3) :
+        visited = [0 for i in range(9)]
+        for i in range(3):
+            for j in range(3):
+                next_row = 3*k + i
+                next_col = 3*k + j
+
+                block = puzzle[next_row][next_col]
+    
+                if visited[block - 1] == 0:
+                    visited[block - 1] = 1
+                    continue
+                is_answer = 0
+                return
+
+
+puzzle = []
+is_answer = 0
+answers = []
+
+for tc in range(T):
+    puzzle = []
+    for i in range(9):
+        puzzle.append(list(map(int, input().split())))
+
+    is_answer = 0
+
+    search_sudoku()
+
+for i in range(1, T + 1):
+    print(f"#{i} {answers[i - 1]}")
