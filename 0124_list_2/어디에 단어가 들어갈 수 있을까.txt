@@ -1,0 +1,69 @@
+T = int(input())
+ 
+dx = [0, 1]
+dy = [1, 0]
+def find_space_for_puzzle(row, col, direction) :
+    global puzzle
+    global N
+    global K
+    global space_for_puzzle
+    # print(f"row : {row} col : {col}")
+    white_count = 1
+    next_row = row
+    next_col = col
+    while True :
+        next_row += dx[direction]
+        next_col += dy[direction]
+ 
+        if next_row == N or next_col == N :
+            break
+        block = puzzle[next_row][next_col]
+        if block == 1 :
+            white_count += 1
+            continue
+        break
+ 
+    if white_count == K :
+        space_for_puzzle += 1
+ 
+puzzle = []
+N = 0
+K = 0
+space_for_puzzle = 0
+answers = []
+for tc in range(T) :
+    # N : 퍼즐의 길이 , K : 단어의 길이
+    N, K = map(int, input().split(" "))
+ 
+    # 검정 : 0 하양 : 1
+    puzzle = []
+    for i in range(N) :
+        puzzle.append(list(map(int, input().split())))
+ 
+    # 흰색 부분에서 연속된 가로 또는 세로의 길이만큼 중 == K 인 것을 찾아라
+    space_for_puzzle = 0
+    for i in range(N) :
+        is_col_finished = 0
+        for j in range(N) :
+            block = puzzle[i][j]
+            if block == 1:
+                if is_col_finished == 0 :
+                    find_space_for_puzzle(i, j, 0)
+                    is_col_finished = 1
+                continue
+            is_col_finished = 0
+ 
+    for i in range(N) :
+        is_row_finished = 0
+        for j in range(N) :
+            block = puzzle[j][i]
+            if block == 1 :
+                if is_row_finished == 0 :
+                    find_space_for_puzzle(j, i, 1)
+                    is_row_finished = 1
+                continue
+            is_row_finished = 0
+    answers.append(space_for_puzzle)
+ 
+for i in range(1, T + 1) :
+    print(f"#{i} {answers[i-1]}")
