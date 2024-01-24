@@ -1,0 +1,66 @@
+T = int(input())
+
+def step_down(start_col):
+    global ladder
+    global is_finished
+
+    row = 0
+    now_col = start_col
+    while True :
+        if row == 100 :
+            break
+
+        left_col = now_col - 1
+        left_point = 0
+        if left_col >= 0 :
+            left_point = ladder[row][left_col]
+
+        right_col = now_col + 1
+        right_point = 0
+        if right_col != 100:
+            right_point = ladder[row][right_col]
+
+        if left_point == 1 :
+            while True :
+                if now_col - 1 < 0 :
+                    break
+                if ladder[row][now_col - 1] == 0 :
+                    break
+                now_col -= 1
+
+        if right_point == 1:
+            while True:
+                if now_col + 1 == 100:
+                    break
+                if ladder[row][now_col + 1] == 0:
+                    break
+                now_col += 1
+
+        point = ladder[row][now_col]
+        if point == 2 :
+            is_finished = 1
+            break
+        row += 1
+
+ladder = []
+is_finished = 0
+answers = []
+
+for tc in range(T):
+    # 1: 사다리인 부분 2 : 도착 지점
+    ladder = []
+    for i in range(100):
+        ladder.append(list(map(int, input().split())))
+
+    is_finished = 0
+    for i in range(100):
+        point = ladder[0][i]
+        if point == 1:
+            step_down(i)
+
+        if is_finished == 1 :
+            answers.append(i)
+            break
+
+for i in range(1, T + 1) :
+    print(f"#{i} {answers[i - 1]}")
