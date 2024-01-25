@@ -1,0 +1,41 @@
+"""
+1.바깥쪽 둘러줘서 같은 알고리즘으로 해결해보자
+
+2. 종이 관점 || 바깥족 관점
+-> 종이 관점만 성공함
+"""
+def search_edge():
+    global board
+
+    count = 0
+    for i in range(1, 101):
+        for j in range(1, 101):
+            if board[i][j] != 0:
+                if board[i][j + 1] == 0:
+                    count += 1
+                if board[i][j - 1] == 0:
+                    count += 1
+                if board[i - 1][j] == 0:
+                    count += 1
+                if board[i + 1][j] == 0:
+                    count += 1
+    return count
+
+
+N = int(input())
+papers = []
+for i in range(N) :
+    papers.append(list(map(int, input().split())))
+
+board = [[0 for i in range(102)]for j in range(102)]
+
+for paper in papers :
+    col = paper[0]
+    row = paper[1]
+
+    for i in range(10) :
+        for j in range(10) :
+            board[row + 1 + i][col + 1 + j] += 1
+
+answer = search_edge()
+print(answer)
