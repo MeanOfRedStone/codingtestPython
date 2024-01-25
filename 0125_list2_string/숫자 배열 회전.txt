@@ -1,0 +1,56 @@
+"""
+1. 기준을 명확히 하자
+-> 목적지 기준이 좋은 목적 중 하나이다
+
+목적지[i][j] = 대상[???~`][??`-]
+
+2. 실제 방법
+[90도]
+for i (N)
+    for j (N)
+        arr2[i][j] <- arr[N - 1 - j][i]
+
+-> 여기 까지는 비슷
+
+3. 합치기
+for lst in arr:
+    for a1, a2, a3 in zip(arr1, arr2, arr3)
+        print {.join"a"}...
+-> 코드 참고
+
+"""
+
+T = int(input())
+
+for tc in range(1, T + 1):
+    N = int(input())
+    board = []
+    for i in range(N):
+        board.append(list(map(int, input().split())))
+
+    tr_board = list(map(list, zip(*board)))
+    first = [[0 for _ in range(N)] for _ in range(N)]
+    for i in range(N):
+        for j in range(N - 1, -1,-1):
+            first[i][N - j -1] = tr_board[i][j]
+
+    third = [[0 for _ in range(N)] for _ in range(N)]
+    for i in range(N - 1, -1, -1):
+        for j in range(N):
+            third[N - i - 1][j] = tr_board[i][j]
+
+    second = [[0 for _ in range(N)] for _ in range(N)]
+    tr_tr_board = list(map(list, zip(*tr_board)))
+    for i in range(N - 1, -1, -1):
+        for j in range(N - 1, -1, -1):
+            second[N - i - 1][N - j - 1] = tr_tr_board[i][j]
+
+    answer = first + second + third
+    print(f"#{tc}")
+    for i in range(N):
+        for j in range(3):
+            lst = answer[i + j * N]
+            for number in lst:
+                print(number, end = "")
+            print(" ", end = "")
+        print()
