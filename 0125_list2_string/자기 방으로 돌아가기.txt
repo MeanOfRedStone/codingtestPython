@@ -1,0 +1,40 @@
+"""
+1. 엣지 케이스 어떻게 고려할 것인가?
+대표적인 예)
+1) 최솟값, 최댓값의 경우
+2) 설명은 양수로만 했는데 실제 케이스에 음수가 있는 경우 등
+3) 테스트 케이스만 보고 이런 것을 유도한다
+"""
+T = int(input())
+
+N = 0
+students = []
+answers = []
+
+for tc in range(T):
+    N =int(input())
+    students = []
+    for i in range(N):
+        students.append(list(map(int, input().split())))
+
+    path = [[0] for _ in range(200)]
+    for i in range(1, len(students) + 1):
+        start = (students[i- 1][0] - 1) // 2
+        goal = (students[i- 1][1] - 1) // 2
+
+        if start <= goal:
+            for j in range(start, goal + 1):
+                path[j].append(i)
+            continue
+        for j in range(goal, start + 1):
+            path[j].append(i)
+
+
+    time = 0
+    for i in range(200):
+        time = max(time, len(path[i]))
+
+    answers.append(time - 1)
+
+for i in range(1, T + 1):
+    print(f"#{i} {answers[i - 1]}")
