@@ -1,0 +1,53 @@
+"""
+<강의>
+1. 2에서부터 올라가는 것을 생각해보자
+-> index 메서드
+2. 1)좌우 방향 우선 || 2)좌우 길 없으면 위쪽으로
+
+3.  움직이는거 좀더 단순화해보자
+-> 기존 움직인 곳을 0으로 처리하면서 이동
+
+(참고) 잘안되면 디버거 써보자
+"""
+
+T = int(input())
+
+# 현재 길을 0으로 만들어버리면 재방문 안할 수 잇음
+def step_up(start_col):
+    global ladder
+
+    row = 99
+    now_col = start_col
+
+    while row > 0:
+        if ladder[row][now_col - 1] == 1:
+            ladder[row][now_col] = 0
+            now_col -= 1
+            continue
+        if ladder[row][now_col + 1] == 1:
+            ladder[row][now_col] = 0
+            now_col += 1
+            continue
+        row -= 1
+
+    return now_col
+
+ladder = []
+is_finished = 0
+answers = []
+
+for tc in range(T):
+    # 1: 사다리인 부분 2 : 도착 지점
+    ladder = []
+    for i in range(100):
+        ladder.append([0] + list(map(int, input().split())) + [0])
+
+    for i in range(1, 101):
+        point = ladder[99][i]
+        if point == 2:
+            start_point = step_up(i)
+            answers.append(start_point - 1)
+            break
+
+for i in range(1, T + 1) :
+    print(f"#{i} {answers[i - 1]}")
