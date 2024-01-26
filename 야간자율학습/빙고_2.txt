@@ -1,0 +1,44 @@
+"""
+1. 빙고가 한 번에 3개이상 될 수도 있음
+
+2. 내 빙고의 값을 dictionary에 위치 인덱스를 저장해 풀 수 잇다
+"""
+board = {}
+for i in range(5):
+    bingo = list(map(int, input().split()))
+    for j in range(5):
+        board[bingo[j]] = [i, j]
+
+numbers = []
+for i in range(5):
+    numbers += list(map(int, input().split()))
+
+row = [0 for _ in range(5)]
+col = [0 for _ in range(5)]
+diagonal = [0 for _ in range(2)]
+
+count = 0
+for number in numbers:
+    index = board[number]
+    row[index[0]] += 1
+    col[index[1]] += 1
+
+    if row[index[0]] == 5:
+        count += 1
+    if col[index[1]] == 5:
+        count += 1
+
+    # 좌상단에서 우하단으로 가는 대각선
+    if index[0] == index[1]:
+        diagonal[0] += 1
+        if diagonal[0] == 5:
+            count += 1
+    # 좌하단에서 우상단으로 가는 대각선
+    if index[0] + index[1] == 4:
+        diagonal[1] += 1
+        if diagonal[1] == 5:
+            count += 1
+
+    if count >= 3:
+        print(numbers.index(number) + 1)
+        break
