@@ -1,0 +1,60 @@
+"""
+1. 자르는 값의 크기를 저장
+
+2. 자르는 값중 열에서 가장 큰 값 * 행에서 가장 큰값 -> 정답
+
+3. 아이디어의 중요성
+
+예_
+row_lst
+rows = [0, row]
+0 | 2 |  3 | 8
+
+col Lst
+cols = [0, cols]
+0 | 4 | 10
+"""
+# 가로 세로 최대 100
+col, row = map(int, input().split(" "))
+paper = [[[0] for _ in range(col)] for _ in range(row)]
+
+N = int(input())
+# 가로로 자르는 점선 : 0 , 점선 번호
+# 세로 : 1, 점선 번호
+cut_points = []
+for i in range(N):
+    cut_points.append(list(map(int, input().split())))
+
+# 자르는 번호보다 작은 것들 체크
+for index in range(len(cut_points)):
+    point = cut_points[index]
+    direction = point[0]
+    line_index = point[1]
+
+    if direction == 0:
+        for i in range(line_index):
+            for j in range(col):
+                paper[i][j].append(index + 1)
+        continue
+
+    for i in range(row):
+        for j in range(line_index):
+            paper[i][j].append(index + 1)
+        continue
+
+lst = []
+for i in range(row):
+    for j in range(col):
+        lst.append(paper[i][j])
+tuple_lst = [tuple(i) for i in lst]
+set_lst = list(set(tuple_lst))
+sum = [0 for _ in range(len(set_lst) + 1)]
+
+for i in range(row):
+    for j in range(col):
+        block = paper[i][j]
+        for k in range(len(set_lst)):
+            if list(set_lst[k]) == block:
+                sum[k] += 1
+                break
+print(max(sum))
