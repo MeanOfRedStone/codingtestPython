@@ -1,0 +1,32 @@
+"""
+1. 2차원 dfs 시 어떻게 하면 시간을 줄일 수 있을 것인가?
+
+"""
+def set_queen(col):
+    global N
+    global row_visited
+    global answer
+
+    if col == N:
+        answer += 1
+        return
+
+    for i in range(N):
+        if i in row_visited or lower_diagonal[col - i + N] == 1 or upper_diagonal[i + col] == 1:
+            continue
+        row_visited[col] = i
+        lower_diagonal[col - i + N] = 1
+        upper_diagonal[i + col] = 1
+        set_queen(col + 1)
+        row_visited[col] = -1
+        lower_diagonal[col - i + N] = 0
+        upper_diagonal[i + col] = 0
+
+N = int(input())
+answer = 0
+
+row_visited = [-1 for _ in range(N)]
+lower_diagonal = [0 for _ in range(2 * N)]
+upper_diagonal = [0 for _ in range(2 * N)]
+set_queen(0)
+print(answer)
