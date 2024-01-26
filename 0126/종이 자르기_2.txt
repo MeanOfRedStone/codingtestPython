@@ -1,0 +1,39 @@
+import sys
+sys.stdin = open("in.txt", "r")
+
+# 가로 세로 최대 100
+col, row = map(int, input().split(" "))
+
+N = int(input())
+# 가로로 자르는 점선 : 0 , 점선 번호
+# 세로 : 1, 점선 번호
+cut_points = []
+for i in range(N):
+    cut_points.append(list(map(int, input().split())))
+
+row = [0, row]
+col = [0, col]
+for point in cut_points:
+    # 가로로 자를 경우
+    if point[0] == 0:
+        row.append(point[1])
+        continue
+
+    # 세로로 자를 경우
+    col.append(point[1])
+row_max = 0
+col_max = 0
+row.sort()
+col.sort()
+for i in range(len(row) - 1):
+    number = row[i]
+    next_number = row[i + 1]
+    difference = next_number - number
+    row_max = max(row_max, difference)
+for i in range(len(col) - 1):
+    number = col[i]
+    next_number = col[i + 1]
+    difference = next_number - number
+    col_max = max(col_max, difference)
+
+print(row_max * col_max)
