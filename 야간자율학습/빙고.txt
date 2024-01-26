@@ -1,0 +1,68 @@
+"""
+1. 빙고가 한 번에 3개이상 될 수도 있음
+"""
+def solve(number):
+    global board
+    global visited
+
+    for i in range(5):
+        for j in range(5):
+            if board[i][j] == number:
+                visited[i][j] = 1
+                check()
+                return
+
+
+def check():
+    global visited
+    global is_finished
+
+    bingo_count = 0
+
+    for i in range(5):
+        row_count = 0
+        col_count = 0
+        for j in range(5) :
+            row_count += visited[i][j]
+            col_count += visited[j][i]
+        if row_count == 5:
+            bingo_count += 1
+        if col_count == 5:
+            bingo_count += 1
+
+    diagonal_count = 0
+    reverse_diagonal_count = 0
+    index = 0
+    while index < 5:
+        if visited[index][index] == 1:
+            diagonal_count += 1
+        if visited[4 - index][index] == 1:
+            reverse_diagonal_count += 1
+        index += 1
+
+    if diagonal_count == 5:
+        bingo_count += 1
+    if reverse_diagonal_count == 5:
+        bingo_count += 1
+
+    if bingo_count >= 3:
+        is_finished = 1
+
+
+
+board = []
+for i in range(5):
+    board.append(list(map(int, input().split())))
+
+numbers = []
+for i in range(5):
+    numbers += list(map(int, input().split()))
+
+visited = [[0 for _ in range(5)] for _ in range(5)]
+
+is_finished = 0
+for i in range(len(numbers)):
+    solve(numbers[i])
+    if is_finished == 1:
+        print(i + 1)
+        exit()
