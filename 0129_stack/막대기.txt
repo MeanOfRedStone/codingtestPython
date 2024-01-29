@@ -1,0 +1,14 @@
+N = int(input())
+sticks = []
+for i in range(N):
+    sticks.append(int(input()))
+
+highest_stick = sticks.pop()
+
+answer = 1
+while sticks:
+    stick = sticks.pop()
+    if stick > highest_stick:
+        highest_stick = stick
+        answer += 1
+print(answer)
