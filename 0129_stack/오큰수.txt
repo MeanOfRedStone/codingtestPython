@@ -1,0 +1,49 @@
+"""
+1. 이전 값을 배열이나 딕셔너리에 기록해서 공백을 활용한다
+"""
+
+N = int(input())
+
+numbers = list(map(int, input().split()))
+answer = []
+dict = {}
+nge_number = -1
+answer.append(nge_number)
+number = numbers.pop()
+dict[number] = nge_number
+while numbers:
+    next_number = numbers.pop()
+    # 1. 다음 숫자가 이전 숫자보다 작은 경우
+    if next_number < number:
+        answer.append(number)
+        nge_number = number
+        dict[next_number] = number
+        number = next_number
+        continue
+    #  2. 다음 숫자가 이전 숫자보다 큰 경우
+    # 1) nge_number와 비교
+    # (1) nge number보다 작은 경우
+    if next_number < nge_number:
+        answer.append(nge_number)
+        dict[next_number] = nge_number
+        number= next_number
+        continue
+
+    # (2) nge number보다 이상인 경우
+    if nge_number == -1:
+        answer.append(nge_number)
+        dict[next_number] = nge_number
+        number = next_number
+        continue
+    key_value = dict[nge_number]
+    while key_value != -1:
+        if key_value > next_number:
+            break
+
+        key_value = dict[key_value]
+    answer.append(key_value)
+    dict[next_number] = key_value
+    number = next_number
+
+for i in range(N-1, -1, -1):
+    print(answer[i], end = " ")
