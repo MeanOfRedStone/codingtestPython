@@ -1,0 +1,36 @@
+N = int(input())
+
+numbers = []
+goal_numbers = []
+for i in range(N):
+    goal_numbers.append(int(input()))
+    numbers.append(i + 1)
+numbers.append(N + 1)
+answer_lst = []
+combination = []
+index = 0
+goal_index = 0
+while goal_index < N:
+    # 1. 연속된 수 배열에서 수를 꺼냄
+    element = numbers[index]
+    goal_number = goal_numbers[goal_index]
+    # 2. 수가 입력한 숫자 이하라면 조합에 넣는다
+    if element <= goal_number:
+        answer_lst.append("+")
+        combination.append(element)
+        index += 1
+        continue
+    # 3. 수가 입력한 숫자보다 크다면 조합에서 뺀뒤 다음 숫자를 확인해준다
+    combination_number = combination.pop()
+    answer_lst.append("-")
+    # 1) 조합에서 뺀 숫자와 입력한 숫자가 다르면 종료
+    if combination_number != goal_number:
+        answer_lst.append("NO")
+        break
+    goal_index += 1
+
+if "NO" in answer_lst:
+    print("NO")
+    exit()
+for character in answer_lst:
+    print(character)
