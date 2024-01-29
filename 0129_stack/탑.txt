@@ -1,0 +1,32 @@
+N = int(input())
+
+towers = list(map(int, input().split()))
+towers.reverse()
+dict = {}
+tower = towers.pop()
+dict[tower] = [0, -1]
+index = 0
+answer = [0]
+while towers:
+    next_tower = towers.pop()
+    # 1. 다음 탑이 현재 탑보다 높은 경우
+    if next_tower < tower:
+        dict[next_tower] = [tower, index]
+        answer.append(index + 1)
+        tower = next_tower
+        index += 1
+        continue
+
+    #2. 다음 탑이 현재 탑보다 낮은 경우
+    key_value, temp_index = dict[tower][0], dict[tower][1]
+    while key_value != 0:
+        if next_tower < key_value:
+            break
+
+        key_value, temp_index = dict[key_value][0], dict[key_value][1]
+
+    dict[next_tower] = [key_value, temp_index]
+    answer.append(temp_index + 1)
+    tower = next_tower
+    index += 1
+print(*answer)
