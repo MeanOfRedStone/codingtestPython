@@ -1,0 +1,15 @@
+T = int(input())
+
+for tc in range(1, T + 1):
+    string = list(input())
+
+    after_remove = []
+    for i in range(len(string)):
+        character = string[i]
+        # 비어있거나 마지막 문자와 동일하지 않을 경우 삽입
+        if not after_remove or character != after_remove[-1]:
+            after_remove.append(character)
+            continue
+        # 마지막 문자와 동일한경우 둘다 삭제
+        after_remove.pop()
+    print(f"#{tc} {len(after_remove)}")
