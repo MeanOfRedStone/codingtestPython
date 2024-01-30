@@ -1,0 +1,118 @@
+"""
+0. 4방향 오목체크(반복)
+1. 역방향 돌 색깔 다를때만 탐색 시작해서 탐색 속도 향상
+2. 해당방향 5개시 오목
+"""
+
+def search(row, col, block):
+    global board
+    global answer
+
+    row_count = 1
+    # 행 탐색(양의 방향)
+    next_block_col = col + 1
+    next_block = board[row][next_block_col]
+    while next_block == block:
+        row_count += 1
+        next_block_col += 1
+        next_block = board[row][next_block_col]
+
+    # 행 탐색(음의 방향)
+    next_block_col = col -1
+    next_block = board[row][next_block_col]
+    while next_block == block:
+        row_count += 1
+        next_block_col -= 1
+        next_block = board[row][next_block_col]
+
+    if row_count == 5:
+        print(block)
+        print(row, col)
+        exit()
+
+    col_count = 1
+    # 열 탐색(양의 방향)
+    next_block_row = row + 1
+    next_block = board[next_block_row][col]
+    while next_block == block:
+        col_count += 1
+        next_block_row += 1
+        next_block = board[next_block_row][col]
+    # 열 탐색(음의 방향)
+    next_block_row = row - 1
+    next_block = board[next_block_row][col]
+    while next_block == block:
+        col_count += 1
+        next_block_row -= 1
+        next_block = board[next_block_row][col]
+
+    if col_count == 5:
+        print(block)
+        print(row, col)
+        exit()
+
+    upper_diagonal_count = 1
+    # 상방 대각선(양의 방향)
+    next_block_row = row - 1
+    next_block_col = col + 1
+    next_block = board[next_block_row][next_block_col]
+    while next_block == block:
+        upper_diagonal_count += 1
+        next_block_row -= 1
+        next_block_col += 1
+        next_block = board[next_block_row][next_block_col]
+    # 상방 대각선(음의 방향)
+    next_block_row = row + 1
+    next_block_col = col - 1
+    next_block = board[next_block_row][next_block_col]
+    while next_block == block:
+        upper_diagonal_count += 1
+        next_block_row += 1
+        next_block_col -= 1
+        next_block = board[next_block_row][next_block_col]
+
+    if upper_diagonal_count == 5:
+        print(block)
+        print(next_block_row - 1, next_block_col + 1)
+        exit()
+
+    lower_diagonal_count = 1
+    # 하방 대각선(양의 방향)
+    next_block_row = row + 1
+    next_block_col = col + 1
+    next_block = board[next_block_row][next_block_col]
+    while next_block == block:
+        lower_diagonal_count += 1
+        next_block_row += 1
+        next_block_col += 1
+        next_block = board[next_block_row][next_block_col]
+
+    # 하방 대각선(음의 방향)
+    next_block_row = row - 1
+    next_block_col = col - 1
+    next_block = board[next_block_row][next_block_col]
+    while next_block == block:
+        lower_diagonal_count += 1
+        next_block_row -= 1
+        next_block_col -= 1
+        next_block = board[next_block_row][next_block_col]
+
+    if lower_diagonal_count == 5:
+        print(block)
+        print(row, col)
+        exit()
+
+board = [[0 for _ in range(21)]]
+
+
+for i in range(19):
+    board.append([0] + list(map(int, input().split())) + [0])
+board.append([0 for _ in range(21)])
+
+for i in range(1, 20):
+    for j in range(1, 20):
+        block = board[i][j]
+        if block != 0:
+            search(i, j, block)
+
+print(0)
