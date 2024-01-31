@@ -1,0 +1,41 @@
+def dfs():
+    global graph
+    global answer
+
+    stack = []
+    visited = [0 for _ in range(100)]
+
+    stack.append(0)
+
+    while stack:
+        node = stack.pop()
+
+        if visited[node] == 1:
+            continue
+
+        visited[node] = 1
+
+        for next_node in graph[node]:
+            if next_node == 99:
+                answer = 1
+                return
+            stack.append(next_node)
+
+graph = []
+answer = 0
+
+for tc in range(1, 11):
+    T, N = map(int, input().split())
+
+    graph = [[]for _ in range(100)]
+    edges = list(map(int, input().split()))
+    for i in range(N):
+        edge = []
+        for j in range(2):
+            edge.append(edges[2*i + j])
+        start = edge[0]
+        end = edge[1]
+        graph[start].append(end)
+    answer = 0
+    dfs()
+    print(f"#{tc} {answer}")
