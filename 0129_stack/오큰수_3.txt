@@ -1,0 +1,26 @@
+"""
+1. 좀더 원론적인 풀이 
+1) 오른쪽부터 탐색하며 스택에 넣어놓고 나보다 작거나 같은 높이 나에게 가려짐 -> 그러면 pop
+2) 내 값을 push
+-> 이걸 스택을 활용해서 구현해보자
+"""
+N = int(input())
+
+numbers = list(map(int, input().split()))
+answer = [-1 for _ in range(N)]
+stack = [numbers[-1]]
+
+for i in range(len(numbers) - 2, -1, -1):
+    # 나보다 작거나 같은 높이는 나에게 가려짐... 모두 pop()
+    # == 스택 값보다 내가 더 크다면 pop
+    while stack and numbers[i] >= stack[-1]:
+        stack.pop()
+
+    # 이제 스택[-1]값은 나보다 큰 값
+    if stack:
+        answer[i] = stack[-1]
+
+    # 나보다 작은 값이 왼쪽에 있을수 있으니 내값 push
+    stack.append(numbers[i])
+
+print(*answer)
