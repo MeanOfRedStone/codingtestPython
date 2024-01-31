@@ -1,0 +1,41 @@
+"""
+1. 스택은 제일 위에 있는 부분만 고려해서 만듬
+-> 앞에서부터 큰 오른쪽을 계속 찾으면 시간초과 발생
+
+
+2. 기본 배열을 -1을 넣어놓고 생각해보자
+1) 오른쪽부터 탐색하며 스택에 넣어놓고 나보다 작거나 같은 높이 나에게 가려짐 -> 그러면 pop
+2) 내 값을 push
+-> 이걸 스택을 활용해서 구현해보자
+
+(참고 : 기본 테케 <-> 내가 만든 테케 활용해보며 비교해보자)
+
+3. insert(0, 값)은 시간 많이 듬
+"""
+
+N = int(input())
+
+numbers = list(map(int, input().split()))
+answer = [-1]
+stack = [-1]
+nge_number = -1
+for i in range(len(numbers) - 2, -1, -1):
+    number = numbers[i]
+    # 1. 바로 오른쪽 숫자가 현재 숫자보다 큰 경우
+    if number < numbers[i + 1] :
+        nge_number = numbers[i + 1]
+        stack.append(nge_number)
+        answer.append(nge_number)
+        continue
+
+    # 2. 1.이 아닌 경우 마지막 오큰 수 스택을 조건을 만족할 때까지 불러옴
+    while nge_number != -1:
+        nge_number = stack.pop()
+
+        if number < nge_number:
+            break
+
+    stack.append(nge_number)
+    answer.append(nge_number)
+for i in range(len(answer) - 1, -1, -1):
+    print(answer[i], end = " ")
