@@ -1,0 +1,54 @@
+import sys
+sys.setrecursionlimit(10000)
+
+dx = [0, 1, 0, -1]
+dy = [1, 0, -1, 0]
+def dfs(row, col):
+    global board
+    global visited
+    global M
+    global N
+    global square
+
+    if visited[row][col] == 1:
+        return
+
+    visited[row][col] = 1
+    square += 1
+
+    for i in range(4):
+        next_row = row + dx[i]
+        next_col = col + dy[i]
+
+        if board[next_row][next_col] == 0:
+            dfs(next_row, next_col)
+
+
+
+M, N, K = map(int, input().split())
+
+board = [[1 for _ in range(N + 2)]]
+for i in range(M):
+    board.append([1] + [0 for _ in range(N)] + [1])
+board.append([1 for _ in range(N + 2)])
+
+for square in range(K):
+    x1, y1, x2, y2 = map(int, input().split())
+
+    for i in range(y1 + 1, y2 + 1):
+        for j in range(x1 + 1, x2 + 1):
+            board[i][j] = 1
+visited = [[0 for _ in range(N + 2)]for _ in range(M + 2)]
+count = 0
+squares = []
+for i in range(1, M + 1):
+    for j in range(1, N + 1):
+        square = 0
+        if board[i][j] == 0 and visited[i][j] == 0:
+            dfs(i, j)
+            count += 1
+            squares.append(square)
+
+print(count)
+squares.sort()
+print(*squares)
