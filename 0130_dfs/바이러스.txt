@@ -1,0 +1,32 @@
+def dfs(start):
+    global graph
+    global N
+    global visited
+
+    stack = []
+    stack.append(start)
+
+    while stack:
+        node = stack.pop()
+
+        if visited[node] == 1:
+            continue
+
+        visited[node] = 1
+        for next_node in graph[node]:
+            stack.append(next_node)
+
+
+# 컴퓨터의 수
+N = int(input())
+# 경로의 수
+E = int(input())
+
+graph = [[] for _ in range(N + 1)]
+for i in range(E):
+    start, end = map(int, input().split())
+    graph[start].append(end)
+    graph[end].append(start)
+visited = [0 for _ in range(N + 1)]
+dfs(1)
+print(sum(visited) - 1)
