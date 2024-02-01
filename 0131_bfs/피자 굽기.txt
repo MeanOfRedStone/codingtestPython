@@ -1,0 +1,38 @@
+T = int(input())
+
+for tc in range(1, T + 1):
+    N, M = map(int, input().split())
+
+    pizza_input = list(map(int, input().split()))
+    order = [[]for _ in range(M)]
+    for i in range(1, M + 1):
+        order[i - 1].append(pizza_input[i - 1])
+        order[i-1].append(i)
+
+    oven = []
+    for i in range(N):
+        oven.append(order.pop(0))
+
+    while True:
+        pizza = oven.pop(0)
+        cheese = pizza[0]
+        index = pizza[1]
+        cheese = cheese // 2
+        pizza = [cheese, index]
+
+        # 치즈가 0이 아닐경우 다시 오븐에 넣어줌
+        if cheese != 0:
+            oven.append(pizza)
+            continue
+
+        # 치즈가 0일 경우
+        # 1) oven에 남은 피자가 1개일 경우 종료
+        if len(oven) == 1:
+            break
+
+        # 2) oven에 피자가 여러개 있을 경우
+        # (1) 아직 화덕에 넣지 않은 피자가 있는 경우 넣어준다
+        if order:
+            oven.append(order.pop(0))
+
+    print(f"#{tc} {oven[0][1]}")

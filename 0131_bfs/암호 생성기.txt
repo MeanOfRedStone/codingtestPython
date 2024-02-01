@@ -1,0 +1,27 @@
+for tc in range(10):
+    T = int(input())
+    password = list(map(int, input().split()))
+    
+    #1. Cycle 시작 : 첫 숫자 빼주고 count<- 1
+    number = password.pop(0)
+    count = 1
+    while True:
+        #2. count 수만큼 수를 빼줌
+        number = number - count
+        
+        #3. 맨 뒤에 넣기 전에 0 이하인지 확인 -> 0 이하일 경우 0으로 값 고정
+        if number < 0:
+            number = 0
+        password.append(number)
+        #4. 0인경우 종료
+        if number == 0:
+            break
+        #5. 싸이클 진행중이면 count 증가
+        count += 1
+        #6. 한 싸이클이 끝나면 다시 처음으로 count 변경
+        if count == 6:
+            count = 1
+        #7. 다음 숫자 빼줌
+        number = password.pop(0)
+    print(f"#{T}", end = " ")
+    print(*password)
