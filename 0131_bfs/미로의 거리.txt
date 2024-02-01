@@ -1,0 +1,46 @@
+dx = [0, 1, 0, -1]
+dy = [1, 0, -1, 0]
+def find_exit(start, end):
+    global board
+    global N
+    visited = [[0 for _ in range(N + 2)]for _ in range(N + 2)]
+
+    q = []
+    count = 0
+    q.append([start, end, count])
+    visited[start][end] = 1
+
+    while q:
+        element = q.pop(0)
+        row = element[0]
+        col = element[1]
+        count = element[2]
+
+        for i in range(4):
+            next_row = row + dx[i]
+            next_col = col + dy[i]
+            if board[next_row][next_col] == '3':
+                return count
+            if visited[next_row][next_col] == 0 and board[next_row][next_col] == '0':
+                q.append([next_row, next_col, count + 1])
+                visited[next_row][next_col] = 1
+
+    return 0
+
+T = int(input())
+
+for tc in range(1, T + 1):
+    N = int(input())
+
+    board = [['1' for _ in range(N + 2)]]
+    for i in range(N):
+        board.append(['1'] + list(input()) + ['1'])
+    board.append(['1' for _ in range(N + 2)])
+
+    for i in range(1, N + 1):
+        for j in range(1, N + 1):
+            block = board[i][j]
+            if block == '2':
+                count = find_exit(i, j)
+
+    print(f"#{tc} {count}")
