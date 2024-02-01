@@ -1,0 +1,52 @@
+dx = [0, 1, 0, -1]
+dy = [1, 0, -1, 0]
+def safe_area_search(i, j, height):
+    global board
+    global visited
+    global h
+
+    location_queue = []
+    visited[i][j] = 1
+    location_queue.append([i, j])
+
+    while location_queue:
+        location = location_queue.pop(0)
+        row = location[0]
+        col = location[1]
+        for i in range(4):
+            next_row = row + dx[i]
+            next_col = col + dy[i]
+            height = board[next_row][next_col]
+
+            if height > h and visited[next_row][next_col] == 0:
+                visited[next_row][next_col] = 1
+                location_queue.append([next_row, next_col])
+
+
+N = int(input())
+
+board = [[0 for _ in range(N + 2)]]
+for i in range(N):
+    board.append([0] + list(map(int, input().split())) + [0])
+board.append([0 for _ in range(N + 2)])
+highest_height = 0
+for row in board:
+    height = max(row)
+    highest_height = max(highest_height, height)
+safe_area = 0
+visited = []
+h = 0
+# 1. 입력받은 도시의 높이의 최댓값을 찾는다
+# 2. 0 ~ 도시 높이 최댓값까지 안전지대를 찾는다
+# 3. 가장 안전지대가 많이 나오는 경우를 찾는다
+for h in range(highest_height):
+    visited = [[0 for _ in range(N + 2)] for _ in range(N + 2)]
+    count = 0
+    for i in range(1, N + 1):
+        for j in range(1, N + 1):
+            height = board[i][j]
+            if height > h and visited[i][j] == 0:
+                count += 1
+                safe_area_search(i, j, height)
+    safe_area = max(safe_area, count)
+print(safe_area)

@@ -1,0 +1,81 @@
+dx = [0, 1, 0, -1]
+dy = [1, 0, -1, 0]
+def color_search(i, j, color):
+    global board
+    global N
+    global visited
+
+    points = []
+
+    visited[i][j] = 1
+    points.append([i, j])
+
+    while points:
+        point = points.pop(0)
+        row = point[0]
+        col = point[1]
+
+        for i in range(4):
+            next_row = row + dx[i]
+            next_col = col + dy[i]
+
+            if board[next_row][next_col] == color and visited[next_row][next_col] == 0:
+                visited[next_row][next_col] = 1
+                points.append([next_row, next_col])
+
+def saekyak_saerch(i, j):
+    global board
+    global N
+    global saekyak_visited
+
+    points = []
+
+    saekyak_visited[i][j] = 1
+    points.append([i, j])
+
+    while points:
+        point = points.pop(0)
+        row = point[0]
+        col = point[1]
+
+        for i in range(4):
+            next_row = row + dx[i]
+            next_col = col + dy[i]
+
+            if (board[next_row][next_col] == 'R' or board[next_row][next_col] == 'G') and saekyak_visited[next_row][next_col] == 0:
+                saekyak_visited[next_row][next_col] = 1
+                points.append([next_row, next_col])
+
+N = int(input())
+
+board = [['W' for _ in range(N + 2)]]
+for i in range(N):
+    board.append(['W'] + list(input()) + ['W'])
+board.append(['W' for _ in range(N + 2)])
+
+# 1. 1) R, G, B 각각의 영역을 bfs(color_search0, 2) R-G영역 한번 더 bfs(saekyak_search)
+# 2. 1)R, G, B 각각의 영역을 탐색할 때는 visited 방문 배열, 2) R-G영역은 saekyak_visited 방문 배열 사용
+r_count = 0
+g_count = 0
+b_count = 0
+rg_count = 0
+visited = [[0 for _ in range(N + 2)]for _ in range(N + 2)]
+saekyak_visited = [[0 for _ in range(N + 2)]for _ in range(N + 2)]
+for i in range(1, N + 1):
+    for j in range(1, N + 1):
+        color = board[i][j]
+        # 1. R,G,B 영역 각각 bfs 색깔마다 그에 맞는 count += 1씩
+        if (color == 'B' or color == 'R' or color == 'G') and visited[i][j] == 0:
+            color_search(i, j, color)
+            if color == 'R':
+                r_count += 1
+            if color == 'G':
+                g_count += 1
+            if color == 'B':
+                b_count += 1
+        # 2. R-G영역으로 나누어 bfs 한 번 더 진행
+        if (color == 'R' or color == 'G') and saekyak_visited[i][j] == 0:
+            saekyak_saerch(i, j)
+            rg_count += 1
+
+print(r_count + g_count + b_count, rg_count + b_count)
