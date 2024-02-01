@@ -1,0 +1,38 @@
+def find_count(start, goal):
+    global people
+    global N
+
+    visited = [0 for _ in range(N + 1)]
+    q = []
+    count = 0
+    q.append([start, count])
+    visited[start] = 1
+
+    while q:
+        people_element = q.pop(0)
+        person = people_element[0]
+        count = people_element[1]
+
+        for next_people in people[person]:
+            if next_people == goal:
+                return count + 1
+            if visited[next_people] == 0:
+                q.append([next_people, count + 1])
+                visited[next_people] = 1
+    return -1
+
+# 사람 수
+N = int(input())
+people = [[]for _ in range(N + 1)]
+# 촌수 계산하는 사람 번호
+s, g = map(int, input().split())
+# 관계의 수
+M = int(input())
+for i in range(M):
+    # x : y의 부모 y: 자식
+    x, y = map(int, input().split())
+    people[x].append(y)
+    people[y].append(x)
+
+answer = find_count(s, g)
+print(answer)
