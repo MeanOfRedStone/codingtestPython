@@ -1,0 +1,50 @@
+def dfs(start):
+    global graph
+    global dfs_visited
+    global N
+
+    if dfs_visited == 1:
+        return
+
+    print(start, end = " ")
+    dfs_visited[start] = 1
+
+    for next_node in graph[start]:
+        if dfs_visited[next_node] == 0:
+            dfs(next_node)
+
+
+def bfs(start):
+    global graph
+    global N
+
+    visited = [0 for _ in range(N + 1)]
+    q = []
+    q.append(start)
+    visited[start] = 1
+
+    while q:
+        node = q.pop(0)
+        print(node, end = " ")
+
+        for next_node in graph[node]:
+            if visited[next_node] == 0:
+                q.append(next_node)
+                visited[next_node] = 1
+
+
+N, M, V = map(int, input().split())
+
+graph = [[]for _ in range(N + 1)]
+
+for i in range(M):
+    start, end = map(int, input().split())
+    graph[start].append(end)
+    graph[end].append(start)
+for node in graph:
+    node.sort()
+
+dfs_visited = [0 for _ in range(N + 1)]
+dfs(V)
+print()
+bfs(V)
