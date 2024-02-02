@@ -1,0 +1,51 @@
+from collections import deque
+
+dx = [0, 1, 0, -1]
+dy = [1, 0, -1, 0]
+def ripe():
+    global board
+    global N
+    global M
+    global visited
+    global max_value
+    global q
+
+    while q:
+        tomato = q.popleft()
+        row = tomato[0]
+        col = tomato[1]
+        value = board[row][col]
+        max_value = max(max_value, value)
+        for i in range(4):
+            next_row = row + dx[i]
+            next_col = col + dy[i]
+            # 여러번 방문할 수도 있으니 벽과 시작점을 제외 + 아직 방문하지 않은곳은 모두 방문할 수 있다
+            if 0 <= next_row < N and 0 <= next_col < M and visited[next_row][next_col] == 0 and board[next_row][next_col] == 0:
+                q.append([next_row, next_col])
+                board[next_row][next_col] = value + 1
+                visited[next_row][next_col] = 1
+
+M, N = map(int, input().split())
+
+board = []
+for i in range(N):
+    board.append(list(map(int, input().split())))
+visited = [[0 for _ in range(M)]for _ in range(N)]
+q = deque()
+max_value = 0
+for i in range(N):
+    for j in range(M):
+        if board[i][j] == 1:
+            q.append([i, j])
+            visited[i][j] = 1
+ripe()
+
+for row in board:
+    if 0 in row:
+        print(-1)
+        exit()
+
+if max_value == 1:
+    print(0)
+    exit()
+print(max_value - 1)
