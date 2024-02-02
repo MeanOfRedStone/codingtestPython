@@ -1,0 +1,50 @@
+"""
+1. 
+"""
+
+from collections import deque
+
+def bfs():
+    global N
+    global K
+
+    visited = [0 for _ in range(100_001)]
+    time = 0
+    if N == K:
+        print(time)
+        exit()
+    q = deque()
+    q.append([N, 0, time])
+    q.append([N, 1, time])
+    q.append([N, 2, time])
+    visited[N] = 1
+
+    while q:
+        subin = q.popleft()
+        location = subin[0]
+        move = subin[1]
+        time = subin[2]
+        if move == 0:
+            location -= 1
+        if move == 1:
+            location += 1
+        if move == 2:
+            location = location * 2
+        time += 1
+
+        if location > 100_000 or location < 0:
+            continue
+
+        if location == K:
+            print(time)
+            exit()
+
+        for i in range(3):
+            if visited[location] == 0:
+                q.append([location, i, time])
+        visited[location] = 1
+
+
+N, K = map(int, input().split())
+time = bfs()
+print(time)
