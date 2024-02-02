@@ -1,0 +1,32 @@
+"""
+bfs로 다시 풀어보자
+"""
+
+def find_combination():
+    global A
+    global B
+    global combination
+
+    if A == B:
+        print(len(combination) + 1)
+        exit()
+
+    for i in range(2):
+        A_value = A
+        if i == 0:
+            A = A * 2
+        if i == 1:
+            A = 10 * A + 1
+        if A > B:
+            return
+
+        combination.append(i)
+        find_combination()
+        combination.pop()
+        A = A_value
+
+
+A, B = map(int, input().split())
+combination = []
+find_combination()
+print(-1)
