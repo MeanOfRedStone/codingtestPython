@@ -1,0 +1,35 @@
+dx = [-2, -2, -1, -1, 1, 1, 2, 2]
+dy = [-1, 1, -2, 2, -2, 2, -1, 1]
+def search_goal(row, col):
+    global board
+    global L
+    q = []
+    q.append([row, col])
+
+    while q:
+        location = q.pop(0)
+        loc_row = location[0]
+        loc_col = location[1]
+
+        for i in range(8):
+            next_row = loc_row + dx[i]
+            next_col = loc_col + dy[i]
+            if 0 <= next_row < L and 0 <= next_col < L and (board[next_row][next_col] == 0 or board[next_row][next_col] == -1):
+                if board[next_row][next_col] == -1:
+                    return board[loc_row][loc_col]
+                q.append([next_row, next_col])
+                board[next_row][next_col] = board[loc_row][loc_col] + 1
+
+
+T = int(input())
+
+for tc in range(T):
+    L = int(input())
+    board = [[0 for _ in range(L)]for _ in range(L)]
+
+    now_row, now_col = map(int, input().split())
+    goal_row, goal_col = map(int, input().split())
+    board[now_row][now_col] = 1
+    board[goal_row][goal_col] = -1
+    answer = search_goal(now_row, now_col)
+    print(answer)
