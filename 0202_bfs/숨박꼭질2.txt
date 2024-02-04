@@ -1,0 +1,45 @@
+import sys
+sys.stdin = open("in.txt", "r")
+
+"""
+1. bfs에서  + 경로까지 찾는법
+-> 방문시 방문 하지 않은 곳 or 이전 방문 깊이 + 1 = 목표 방문 깊이
+"""
+from collections import deque
+
+def bfs():
+    visited = [0 for _ in range(100_001)]
+
+    queue = deque()
+    queue.append(N)
+
+    visited[N] = 1
+    time = 0
+    count = 0
+    while queue:
+        location = queue.popleft()
+
+        if location == K:
+            time = visited[location] - 1
+            count += 1
+            continue
+
+        # 움직임
+        for next_location in (location -1, location + 1, location * 2):
+            if 0 <= next_location <= 100_000:
+                #일반적인 움직임
+                if visited[next_location] == 0 or visited[location] + 1 == visited[next_location]:
+                    queue.append(next_location)
+                    visited[next_location] = visited[location] + 1
+
+    return time, count
+
+# N : 수빈이의 위치 K : 동생의 위치
+N, K = map(int, input().split())
+
+time, count = bfs()
+
+print(time)
+print(count)
+
+print(count)
