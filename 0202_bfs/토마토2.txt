@@ -1,0 +1,47 @@
+from collections import deque
+
+M, N, H = map(int, input().split())
+# box_stack[h][r][c]
+box_stack = []
+# 토마토 박스 H 개
+for h in range(H):
+    # M열 N행개의 토마토 박스
+    box = []
+    for i in range(N):
+        box.append(list(map(int,input().split())))
+    box_stack.append(box)
+#위, 아래, 왼쪾, 오른쪽, 앞, 뒤
+direction = [(-1, 0, 0), (1, 0, 0), (0, 0, -1), (0, 0, 1), (0, -1, 0), (0, 1, 0)]
+
+# visited = [[[0] * M] * N] * H
+queue = deque()
+max_date = 0
+for h in range(H):
+    for i in range(N):
+        for j in range(M):
+            block = box_stack[h][i][j]
+            if block == 1:
+                queue.append((h, i, j))
+                # visited[h][i][j] = 1
+
+while queue:
+    th, ti, tj = queue.popleft()
+    date = box_stack[th][ti][tj]
+    for dh, di, dj in direction:
+        nh, ni, nj = th + dh, ti + di, tj + dj
+        if (0 <= nh < H and 0 <= ni < N and 0 <= nj < M) and box_stack[nh][ni][nj] == 0:
+            queue.append((nh, ni, nj))
+            box_stack[nh][ni][nj] = date + 1
+            max_date = max(max_date, date + 1)
+
+#못익은 토마토 존재하는지 판별
+for box in box_stack:
+    for row in box:
+        if 0 in row:
+            print(-1)
+            exit()
+# 다 익은 경우 처음부터 익었는지 판별
+if max_date == 0:
+    print(max_date)
+    exit()
+print(max_date - 1)
