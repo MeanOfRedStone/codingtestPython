@@ -1,0 +1,26 @@
+"""
+1. queue의 특성상 bfs는 최소거리가 담보됨
+"""
+
+from collections import deque
+
+def A_to_B(A, B):
+
+    queue = deque()
+    queue.append((A, 1))
+
+    while queue:
+        number, count = queue.popleft()
+        if number == B:
+            return count
+
+        for c in number * 2, 10 * number + 1:
+            if c <= B: 
+                queue.append((c, count + 1))
+    return -1
+
+A, B = map(int, input().split())
+
+answer = A_to_B(A, B)
+
+print(answer)
