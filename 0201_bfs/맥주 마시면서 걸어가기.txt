@@ -1,0 +1,65 @@
+"""
+0. 목적지가 정해져있지 않은 경우. 범위만 있는 경우
+
++ 거리를 찾는게 아니라 거리의 조건을 기록해두고 찾는 방법
+
++ 튜플의 활용
+
+1. visited 방문지 편의점(편의 점 개수 n개 만큼)
+편의점 n개를 순환하자
+for i (1, N + 1) #모든 편의점
+    if v[i] == 0: # 미방문
+        ti, tj <- lst[i] # 편의점
+	조건 [ci - ti| + |cj - tj| <= 1000
+
+
+2. 1000m 이내에 편의점이 있는지
+1. 2차원 배열에서 거리찾기 문제 중
+-> 꼭 모든 배열을 탐색하지 않아도 되는 경우
+
+3. visited의 인덱스를 활용해 위치를 사용
+"""
+
+from collections import deque
+
+def go_festival():
+    global board
+
+    visited = [0] * (N + 2)
+    q = deque()
+    q.append((si, sj))
+    visited[0] = 1
+
+    while q:
+        row, col = q.popleft()
+
+        if row == ei and col == ej:
+            return 'happy'
+        for i in range(N + 2):
+            if visited[i] == 0:
+                ci, cj = location[i]
+                if abs(row - ci) + abs(col - cj) <= 1000:
+                    q.append((ci, cj))
+                    visited[i] = 1
+
+    return 'sad'
+
+T = int(input())
+
+for tc in range(T):
+    N = int(input())
+    # 집을 0으로 입력
+
+    # 집입력
+    sj, si =map(int, input().split())
+
+    location = [(si, sj)]
+    # 편의점 : -2 페스티벌 : -3
+    for i in range(1, N + 1):
+        col, row = map(int, input().split())
+        location.append((row, col))
+    ej, ei = map(int, input().split())
+    location.append((ei, ej))
+
+    emotion = go_festival()
+    print(emotion)
