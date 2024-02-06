@@ -1,0 +1,19 @@
+N, M = map(int, input().split())
+
+
+numbers = list(map(int, input().split()))
+accumulate_sum = []
+sum = 0
+for i in range(N):
+    number = numbers[i]
+    sum += number
+    accumulate_sum.append(sum)
+
+goals = []
+for _ in range(M):
+    goals.append(tuple(map(int, input().split())))
+for i, j in goals:
+    if i > 1:
+        print(accumulate_sum[j-1] - accumulate_sum[i - 2])
+        continue
+    print(accumulate_sum[j-1])
