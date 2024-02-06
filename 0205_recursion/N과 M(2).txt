@@ -1,0 +1,19 @@
+def back_tracking(index, depth):
+    global combination
+
+    if depth == M:
+        print(*combination)
+        return
+
+    for i in range(index, N + 1):
+        if i == index :
+            continue
+        combination.append(i)
+        back_tracking(i, depth + 1)
+        combination.pop()
+
+
+N, M = map(int, input().split())
+
+combination = []
+back_tracking(0, 0)
