@@ -1,0 +1,40 @@
+"""
+1. 부분수열의 합
+
+백 트래킹, 재귀 시 종료조건
+-> 맨 앞에
+-> 추가적인 조건은 그 아래에 적자! 꼮
+
+2. 재귀, 백트래킹 템플릿
+[1] 종료조건 처리 : 제일 중요
+[2] 단위 작업
+[3] 하부호출(재귀) : 라이브러리 합수철머 그냥 사용
+"""
+
+def back_tracking(index, depth):
+    global count
+    global combination
+
+    if combination:
+        sum = 0
+        for idx in combination:
+            sum += numbers[idx]
+        if sum == S:
+            count += 1
+
+
+    for i in range(index, N):
+        if i in combination:
+            continue
+
+        combination.append(i)
+        back_tracking(i + 1, depth + 1)
+        combination.pop()
+
+
+N, S = map(int, input().split())
+numbers = list(map(int, input().split()))
+combination = []
+count = 0
+back_tracking(0, 0)
+print(count)
