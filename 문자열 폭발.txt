@@ -1,0 +1,19 @@
+string = list(input())
+bomb = list(input())
+
+# 기존에는 string 중심으로 처리함
+#스택을 기준으로 중복된 문자열을 처리해보자(다경님 풀이 참고)
+stack = []
+for s in string:
+    stack.append(s)
+    #1 중복 처리
+    if s in bomb and len(stack) >= len(bomb) and stack[-len(bomb):] == bomb:
+        for i in range(len(bomb)):
+            stack.pop()
+
+if stack:
+    for character in stack:
+        print(character, end="")
+
+    exit()
+print('FRULA')
