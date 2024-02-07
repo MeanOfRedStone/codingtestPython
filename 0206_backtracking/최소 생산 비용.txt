@@ -1,3 +1,13 @@
+"""
+멀티트리의 경우 최대 N값은 15이다(가지치기 있다는 한계 내에)
+
+밑이 2의 경우 50개가 최대
+
+백  트래킹 재귀류는 처음 설계를 잘 해야 한다
+
+최솟값 구하기에서는 가지치기는 정답 이상인 경우 하는 방법이 대표적이다
+"""
+
 def back_tracking(combination_sum, depth):
     global visited
     global answer
