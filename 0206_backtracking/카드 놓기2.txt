@@ -1,0 +1,49 @@
+"""
+<카드 놓기>
+1. 중복제거
+1) set 활용
+
+2) list에 없다면 추가
+number not in lst
+-> 시간이 많이든다
+
+2. 결론
+set 제발 활용하자
+
+
+3. 카드 조합
+조합의 수가 길어진다면 문자열 더하기는 시간 오래 걸릴 수 있음
+"""
+
+def find_number(depth, string):
+    global visited
+    global visited_combination
+    global count
+
+    # [1] 종료 조건 : 종료시 만들어진 string 매개 변수가 이미 존재하는지 확인하고 없다면 count += 1
+    if depth == k:
+        visited_combination.append(string)
+        return
+
+    # [2] 단위 작업
+    for i in range(len(cards)):
+        if visited[i] == 1:
+            continue
+        visited[i] = 1
+        # [3] 재귀 호출
+        find_number(depth + 1, string + cards[i])
+        visited[i] = 0
+
+
+n = int(input())
+k = int(input())
+
+cards = []
+for i in range(n):
+    cards.append(input())
+
+visited = [0 for _ in range(n)]
+visited_combination = []
+count = 0
+find_number(0, '')
+print(len(set(visited_combination)))
