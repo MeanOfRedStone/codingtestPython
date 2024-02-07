@@ -1,0 +1,35 @@
+def find_level(index, depth):
+    global visited
+    global sum
+    global combination
+    global count
+
+    if sum > R:
+        return
+
+    if depth >= 2:
+        if sum >= L and max(combination) - min(combination) >= X:
+            count += 1
+
+    for i in range(index, N):
+        if visited[i] == 1:
+            continue
+        visited[i] = 1
+        sum += level[i]
+        combination.append(level[i])
+        find_level(i, depth + 1)
+        visited[i] = 0
+        sum -= level[i]
+        combination.pop()
+
+
+# 문제 N개, 난이도의 합은 L이상 R이하
+# 가장 어려운 문제와 쉬운 문제의 난이도의 차이는 X 이상
+N, L, R, X = map(int, input().split())
+level = list(map(int, input().split()))
+visited = [0 for _ in range(N)]
+sum = 0
+count = 0
+combination = []
+find_level(0, 0)
+print(count)
