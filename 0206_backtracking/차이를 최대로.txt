@@ -1,0 +1,34 @@
+def find_combination(depth):
+    global combination
+
+    if depth == N:
+        combination_sum()
+        return
+
+    for i in range(N):
+        if visited[i] == 1:
+            continue
+
+        combination.append(numbers[i])
+        visited[i] = 1
+        find_combination(depth + 1)
+        visited[i] = 0
+        combination.pop()
+
+def combination_sum():
+    global combination
+    global answer
+    sum = 0
+    for i in range(len(combination) - 1):
+        sum += abs(combination[i] - combination[i + 1])
+
+    answer = max(answer, sum)
+
+
+N = int(input())
+numbers = list(map(int, input().split()))
+visited = [0 for _ in range(N)]
+combination =[]
+answer = 0
+find_combination(0)
+print(answer)
