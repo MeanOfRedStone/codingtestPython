@@ -1,0 +1,48 @@
+"""
+1.이전 풀이와의 차이
+이전 풀이에서는 2차원 배열에서 행과 열이 겹치지 않도록 하는 작업을 복잡하게 처리함
+조합을 구하며 방문만 체크한 것이 아니라 직접 방문한 숫자를 입력하고 그 중에 존재하는지 확인햇음 -> 시간 오래걸림
+
+2. 이번에는 단순히 중복되지 않는 조합만 찾으면 된다는 것을 암
+-> 단순히 방문배열만 확인
+
+3. 결과적으로 시간 개선
+in lst는 시간 오래걸림
+
+4. 매개변수로 조합 넘겨주면 시간 오래걸림
+따로 리스트 만들어 사용하자
+"""
+
+def queen_combination(depth):
+    global visited
+    global upper_visited
+    global lower_visited
+    global count
+
+    if depth == N:
+        count += 1
+        return
+
+    # 1. 겹치지 않게 조합을 구해주는 것만으로도 행과 열의 중복을 막을 수 있음
+    # 2. 대각선의 중복은 상향 대각선은 행 + 열의 방문 배열로 하향 대각선은 행 - 열의 방문배열로 확인
+    for i in range(N):
+        if visited[i] == 1 or upper_visited[i + depth] == 1 or lower_visited[i - depth] == 1:
+            continue
+        visited[i] = 1
+        upper_visited[i + depth] = 1
+        lower_visited[i - depth] = 1
+        queen_combination(depth + 1)
+        visited[i] = 0
+        upper_visited[i + depth] = 0
+        lower_visited[i - depth] = 0
+
+N = int(input())
+
+visited = [0 for _ in range(N)]
+# 인덱스 더하기로 체크
+upper_visited = [0 for _ in range(2*N - 1)]
+# 인덱스 빼기로 체크
+lower_visited = [0 for _ in range(2*N - 1)]
+count = 0
+queen_combination(0)
+print(count)
