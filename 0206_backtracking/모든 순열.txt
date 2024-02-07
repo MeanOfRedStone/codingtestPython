@@ -1,0 +1,23 @@
+def find_permutation(depth, combination):
+    global visited
+    # [1] 종료 조건
+    if depth == N:
+        print(*combination)
+        return
+    # [2] 단위 작업
+    
+    # [3]하부 호출 재귀
+    for i in range(1, N + 1):
+        # 방문 배열은 visited로 확인 -> 시간 단축
+        if visited[i] == 1:
+            continue
+        visited[i] = 1
+        # combination 매개변수에 조합을 담음
+        find_permutation(depth + 1, combination + [i])
+        visited[i] = 0
+
+
+N = int(input())
+visited = [0 for _ in range(N + 1)]
+
+find_permutation(0, [])
