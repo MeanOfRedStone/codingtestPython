@@ -1,0 +1,46 @@
+"""
+1. 시간 감소시킴
+1) 애초에 1부터 시작하도록 (이전에는 다 뽑고 1아닌걸 제외함)
+2) usage과 이미 정해진 min usage보다 큰 경우 종료(활용시 생겼던 오류 잡았음)
+"""
+
+def find_route(depth):
+    global visited
+    global combination
+    global min_usage
+    global usage
+
+    if usage >= min_usage:
+        return
+
+    if depth == N - 1:
+        usage += office[combination[depth]][0]
+        min_usage = min(min_usage, usage)
+        usage -= office[combination[depth]][0]
+        return
+
+    for i in range(1, N):
+        if visited[i] == 1:
+            continue
+
+        visited[i] = 1
+        combination.append(i)
+        usage += office[combination[depth]][combination[depth + 1]]
+        find_route(depth + 1)
+        visited[i] = 0
+        usage -= office[combination[depth]][combination[depth + 1]]
+        combination.pop()
+
+
+T = int(input())
+for tc in range(1, T + 1):
+    N = int(input())
+    office = []
+    for i in range(N):
+        office.append(list(map(int, input().split())))
+    visited = [0 for _ in range(N)]
+    combination = [0]
+    usage = 0
+    min_usage = 100 * N
+    find_route(0)
+    print(f"#{tc} {min_usage}")

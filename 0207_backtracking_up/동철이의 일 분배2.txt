@@ -1,0 +1,49 @@
+""""
+1. 소수 만들기의 시간 순
+1) 루프 돌려서 소수 만들기
+2) 람다 식으로 소수 만들기
+3) 계산할때 마다 소수 만들기
+
+2. 곱하기 처리할때는
+1) 매개변수로 처리하는게 계산량이 줄어든다
+
+3. 최댓값의 가지치기 -> 확률이니깐 가능
+"""
+
+
+def find_probability(depth, probability):
+    global max_probability
+
+    if probability <= max_probability:
+        return
+
+    if depth == N:
+        max_probability = max(max_probability, probability)
+        return
+
+    for i in range(N):
+        if visited[i] == 1:
+            continue
+
+        visited[i] = 1
+        number = clerks[depth][i]
+        find_probability(depth + 1, probability * number)
+        visited[i] = 0
+
+T = int(input())
+
+for tc in range(1, T + 1):
+    N = int(input())
+
+    clerks = []
+    for i in range(N):
+        clerks.append(list(map(int, input().split())))
+
+    for i in range(N):
+        for j in range(N):
+            clerks[i][j] = clerks[i][j] / 100
+    max_probability = 0
+    probability = 1
+    visited = [0 for _ in range(N)]
+    find_probability(0, 1)
+    print(f"#{tc} {100*max_probability:6f}")
