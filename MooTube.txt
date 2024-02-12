@@ -1,0 +1,29 @@
+import sys
+sys.setrecursionlimit(10000)
+def find_video(node, start_node, min_usado):
+    global visited
+    # global combination
+    global count
+
+    for next_node, weight  in graph[node]:
+        if visited[next_node] != 0 or next_node == start_node:
+            continue
+        if min(min_usado, weight) >= K:
+            count += 1
+        visited[next_node] = min(min_usado, weight)
+        find_video(next_node, start_node, min(min_usado, weight))
+
+N, Q = map(int, input().split())
+graph = [[]for _ in range(N + 1)]
+for _ in range(N - 1):
+    p, q, r = map(int, input().split())
+    graph[p].append((q, r))
+    graph[q].append((p, r))
+
+for _ in range(Q):
+    visited = [0 for _ in range(N + 1)]
+    combination = []
+    K, start_node = map(int, input().split())
+    count = 0
+    find_video(start_node, start_node, 1_000_000_000)
+    print(count)
