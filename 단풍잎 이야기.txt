@@ -1,0 +1,37 @@
+def find_skill(depth, index):
+    global visited
+    global answer
+
+    if depth == n:
+        # 1 깰 수 있는 퀘스트 확인
+        count = 0
+        for lst in skills:
+            is_contained = True
+            for skill in lst:
+                if visited[skill] == 0:
+                    is_contained = False
+                    break
+            if is_contained:
+                count += 1
+
+        answer = max(answer, count)  
+        return
+
+    for i in range(index, 2*n + 1):
+        if visited[i] == 1:
+            continue
+        visited[i] = 1
+        find_skill(depth + 1, i)
+        visited[i] = 0
+
+# n : 키의 개수, m : 퀘스트의 개수, k : 퀘스트 당 사용하는 스킬의 수
+n, m, k = map(int, input().split())
+
+skills = []
+for _ in range(m):
+    skills.append(tuple(map(int, input().split())))
+
+visited = [0 for _ in range(2*n + 1)]
+answer = 0
+find_skill(0, 1)
+print(answer)
