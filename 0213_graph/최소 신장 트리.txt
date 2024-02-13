@@ -1,0 +1,42 @@
+def prim(node, w):
+    global visited
+    global combination
+    global answer
+
+    if sum(visited) == V:
+        answer = w
+        return
+
+    visited[node] = 1
+    combination.append(node)
+
+    min_value = 10
+    min_node = -1
+
+    for node in combination:
+        for next_node, weight in graph[node]:
+            if visited[next_node] == 1:
+                continue
+            min_value = min(min_value, weight)
+            if min_value == weight:
+                min_node = next_node
+
+    prim(min_node, w + min_value)
+
+
+T = int(input())
+
+for tc in range(1, T + 1):
+    V, E = map(int, input().split())
+    graph = [[]for _ in range(V + 1)]
+
+    for _ in range(E):
+        n1, n2, w = map(int, input().split())
+        graph[n1].append((n2, w))
+        graph[n2].append((n1, w))
+    visited = [0 for _ in range(V + 1)]
+    combination = []
+    answer = 0
+    prim(0, 0)
+
+    print(f"#{tc} {answer}")
