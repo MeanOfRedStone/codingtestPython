@@ -1,0 +1,46 @@
+def find_combination(depth):
+    global combination
+    if depth == N:
+        # print(combination)
+        check_eggs()
+        return
+
+    for i in range(N):
+        if i == depth:
+            continue
+        combination.append(i)
+        find_combination(depth + 1)
+        combination.pop()
+
+
+def check_eggs():
+    global answer
+    temp = eggs.copy()
+    for i in range(N):
+        s, w = temp[i]
+        object_s, object_w = temp[combination[i]]
+        if s <= 0 or object_s <= 0:
+            continue
+        s = s - object_w
+        object_s = object_s - w
+        temp[i] = (s, w)
+        temp[combination[i]] = (object_s, object_w)
+
+    count = 0
+    for i in range(N):
+        s, w = temp[i]
+        if s <= 0:
+            count += 1
+    answer = max(answer, count)
+
+
+N = int(input())
+eggs = []
+for _ in range(N):
+    eggs.append(tuple(map(int, input().split())))
+
+visited = [0 for _ in range(N + 1)]
+combination = []
+answer = 0
+find_combination(0)
+print(answer)
