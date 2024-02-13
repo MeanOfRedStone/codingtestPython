@@ -1,0 +1,43 @@
+"""
+1. mst는 노드 중심의 탐색 기법이다.
+
+2. 기존의 풀이도 결국 combination의 node 간선 중에서 가장 최소 경로를 찾아 다시 combination에 추가하고 또 그 중에서 최소 간선을 찾는 점에서 동일하다.
+-> 이번에는 dfs없이 풀었음
+"""
+
+def prim(start):
+    mst = set([start])
+
+    weight = 0
+    # 최소 신장 트리는 노드 개수 V개일 때 V - 1개의 간선을 택해
+    for _ in range(V):
+        min_value = 11
+        min_node = -1
+        for node in mst:
+            for next_node, w in graph[node]:
+                if next_node in mst:
+                    continue
+                if w < min_value:
+                    min_value = w
+                    min_node = next_node
+
+        mst.add(min_node)
+        weight += min_value
+
+    return weight
+
+
+T = int(input())
+
+for tc in range(1, T + 1):
+    V, E = map(int, input().split())
+    graph = [[]for _ in range(V + 1)]
+
+    for _ in range(E):
+        n1, n2, w = map(int, input().split())
+        graph[n1].append((n2, w))
+        graph[n2].append((n1, w))
+
+    answer = prim(0)
+
+    print(f"#{tc} {answer}")
