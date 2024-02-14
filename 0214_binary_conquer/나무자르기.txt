@@ -1,0 +1,35 @@
+def binary_search(low, high):
+    global answer
+
+    s = 0
+    e = high
+
+    while s <= e:
+        m = (s + e) // 2
+
+        if check(m) == M:
+            answer = m
+            return
+        if check(m) > M:
+            s = m + 1
+            answer = max(answer, m)
+            continue
+        if check(m) < M:
+            e = m - 1
+
+
+def check(height):
+    cnt = 0
+    for tree in trees:
+        if tree - height > 0:
+            cnt += tree - height
+    return cnt
+
+
+N, M = map(int, input().split())
+trees = list(map(int, input().split()))
+trees.sort()
+
+answer = 0
+binary_search(trees[0], trees[-1])
+print(answer)
