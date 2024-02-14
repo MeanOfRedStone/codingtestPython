@@ -1,0 +1,26 @@
+def find_winner(left, right):
+    if left >= right:
+        return cards[left], left
+
+
+    left_number, left_index = find_winner(left, (left + right) // 2)
+    right_number, right_index = find_winner((left + right) // 2 + 1, right)
+
+    if left_number == right_number:
+        return left_number, left_index
+
+    if (left_number + 1) % 3 == right_number % 3:
+        return right_number, right_index
+
+    return left_number, left_index
+
+
+T = int(input())
+
+for tc in range(1, T + 1):
+    N = int(input())
+    cards = [0] + list(map(int, input().split()))
+
+    answer_number, answer_index = find_winner(1 , N)
+
+    print(f"#{tc} {answer_index}")
