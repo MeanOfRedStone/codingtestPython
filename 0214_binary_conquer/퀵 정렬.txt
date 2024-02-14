@@ -1,0 +1,46 @@
+def partition(left, right):
+    global numbers
+    # print("작동")
+    if left >= right:
+        return
+
+    pivot_idx = left
+    pivot = numbers[pivot_idx]
+    left += 1
+    while left < right:
+        if numbers[left] <= pivot:
+            left += 1
+            continue
+
+        if numbers[right] >= pivot:
+            right -= 1
+            continue
+
+        numbers[left], numbers[right] = numbers[right], numbers[left]
+
+    if numbers[left] > pivot:
+        numbers[pivot_idx], numbers[left - 1] = numbers[left - 1], numbers[pivot_idx]
+        return left - 1
+
+    numbers[pivot_idx], numbers[left] = numbers[left], numbers[pivot_idx]
+    return left
+
+
+def quick_sort(left, right):
+    if left >= right:
+        return
+
+    center = partition(left, right)
+    # print("center", center)
+
+    quick_sort(left, center - 1)
+    quick_sort(center + 1, right)
+
+T = int(input())
+
+for tc in range(1, T + 1):
+    N = int(input())
+
+    numbers = list(map(int, input().split()))
+    quick_sort(0, N -1)
+    print(f"#{tc} {numbers[N//2]}")
