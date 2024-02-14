@@ -1,0 +1,44 @@
+def dijkstra(s, e):
+    INF = N * 10
+    visited = [0 for _ in range(N)]
+    distance = [INF for _ in range(N)]
+
+    #1. 시작 노드 처리
+    visited[s] = 1
+    distance[s] = 0
+
+    for node, weight in graph[s]:
+        distance[node] = weight
+
+    for _ in range(N - 1):
+        min_value = INF
+        min_node = -1
+        for node in range(N):
+            if visited[node] == 1:
+                continue
+            if distance[node] < min_value:
+                min_value = distance[node]
+                min_node = node
+
+        visited[min_node] = 1
+        for next_node, weight in graph[min_node]:
+            if distance[next_node] > distance[min_node] + weight:
+                distance[next_node] = distance[min_node] + weight
+
+    return distance[e]
+
+
+T = int(input())
+
+for tc in range(1, T + 1):
+    N, E = map(int, input().split())
+
+    graph = [[]for _ in range(N)]
+
+    for i in range(E):
+        s, e, w = map(int, input().split())
+        graph[s].append((e, w))
+
+    answer = dijkstra(0, N -1)
+
+    print(f"#{tc} {answer}")
