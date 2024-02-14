@@ -1,0 +1,35 @@
+from collections import deque
+
+def find_route():
+    INF = N * N * 10
+    visited = [[INF for _ in range(N)]for _ in range(N)]
+    queue = deque()
+
+    visited[0][0] = 0
+    queue.append((0, 0))
+
+    while queue:
+        r, c = queue.popleft()
+
+        for dx, dy in ((0, 1), (-1, 0), (0, -1), (1, 0)):
+            nr , nc = r + dx, c + dy
+
+            if nr < 0 or nr == N or nc < 0 or nc == N:
+                continue
+
+            if visited[nr][nc] > visited[r][c] + int(board[r][c]):
+                visited[nr][nc] = visited[r][c] + int(board[r][c])
+                queue.append((nr, nc))
+
+    return visited[N - 1][N - 1]
+T = int(input())
+
+for tc in range(1, T + 1):
+    N = int(input())
+    board = []
+    for i in range(N):
+        board.append(list(input()))
+
+    answer = find_route()
+
+    print(f"#{tc} {answer}")
