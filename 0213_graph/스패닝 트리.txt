@@ -1,3 +1,9 @@
+"""
+크루스칼 알고리즘
+왜 sort해야하는지를 잘 고민해보자
+"""
+
+
 def kruskal():
     value = 0
     count = 0
