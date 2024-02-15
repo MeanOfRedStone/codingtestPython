@@ -1,0 +1,100 @@
+magic_number = ['x', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L']
+
+
+def visit_check():
+    global visited
+    global magic_star_depth
+    global magic_star
+
+    for i in range(12):
+        number = numbers[i]
+        idx = magic_number.index(number)
+        visited[idx] = 1
+        if idx != 0:
+            magic_star_depth -= 1
+        magic_star[i] = idx
+
+
+def find_magic_star(depth):
+    global magic_dot
+
+    if depth > 0 and not is_correct(magic_dot):
+        return
+
+    if depth == magic_star_depth:
+        answer = insert(magic_dot)
+        print_magic_star(answer)
+
+    for i in range(1, 13):
+        if visited[i] == 1:
+            continue
+        visited[i] = 1
+        magic_dot.append(i)
+        find_magic_star(depth + 1)
+        magic_dot.pop()
+        visited[i] = 0
+
+
+check_lst = [(1, 2, 3, 4), (0, 2, 5, 7), (0, 3, 6, 10), (7, 8, 9, 10), (1, 5, 8, 11), (4, 6, 9 , 11)]
+
+
+def is_correct(magic_dot):
+    combination = insert(magic_dot)
+    is_magic_star = True
+    is_not_fulfilled = True
+    for i1, i2, i3, i4 in check_lst:
+        if combination[i1] == 0 or combination[i2] == 0 or combination[i3] == 0 or combination[i4] == 0:
+            return is_not_fulfilled
+
+        if combination[i1] + combination[i2] + combination[i3] + combination[i4] != 26:
+            is_magic_star = False
+            break
+
+    return is_magic_star
+
+
+def insert(magic_dot):
+    combination = magic_star.copy()
+    idx = 0
+
+    for i in range(len(magic_star)):
+        if combination[i] == 0:
+            combination[i] = magic_dot[idx]
+            idx += 1
+        if idx == len(magic_dot):
+            break
+    return combination
+
+
+def print_magic_star(combination):
+    for i in range(5):
+        for j in range(9):
+            if board[i][j] == 'x':
+                board[i][j] = magic_number[combination.pop(0)]
+                continue
+            if board[i][j] != '.':
+                combination.pop(0)
+
+    for row in board:
+        for char in row:
+            print(char, end="")
+        print()
+    exit()
+
+
+board = []
+for i in range(5):
+    board.append(list(input()))
+
+numbers = []
+for i in range(5):
+    for j in range(9):
+        if board[i][j] != '.':
+            numbers.append(board[i][j])
+
+magic_star = [0 for _ in range(12)]
+visited = [0 for _ in range(13)]
+magic_star_depth = 12
+visit_check()
+magic_dot = []
+find_magic_star(0)
