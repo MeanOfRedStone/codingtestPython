@@ -1,0 +1,83 @@
+magic_number = ['x','A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K','L']
+def visit_check():
+    global visited
+    global combination_depth
+    global combination
+
+    for i in range(12):
+        number = numbers[i]
+        idx = magic_number.index(number)
+        visited[idx] = 1
+        if idx != 0:
+            combination_depth -= 1
+        combination[i] = idx
+
+
+def make_combination(depth):
+    global lst
+
+    if depth == combination_depth:
+        insert_combination(lst)
+        return
+
+    for i in range(1, 13):
+        if visited[i] == 1:
+            continue
+        visited[i] = 1
+        lst.append(i)
+        make_combination(depth + 1)
+        lst.pop()
+        visited[i] = 0
+
+
+def insert_combination(lst):
+    object = combination.copy()
+    idx = 0
+    for i in range(len(combination)):
+        if object[i] == 0:
+            object[i] = lst[idx]
+            idx += 1
+    check(object)
+
+
+check_lst = [(1, 2, 3, 4), (0, 2, 5, 7), (0, 3, 6, 10), (7, 8, 9, 10), (1, 5, 8, 11), (4, 6, 9 , 11)]
+def check(object):
+    is_star = True
+    # print(object)
+    for i1, i2, i3, i4 in check_lst:
+        # print(f"{object[i1]}, {object[i2]}, {object[i3]}, {object[i4]}")
+        if object[i1] + object[i2] + object[i3] + object[i4] != 26:
+            is_star = False
+            break
+    if is_star:
+        for i in range(5):
+            for j in range(9):
+                if board[i][j] == 'x':
+                    board[i][j] = magic_number[object.pop(0)]
+                    continue
+                if board[i][j] != '.':
+                    object.pop(0)
+
+        for row in board:
+            for char in row:
+                print(char, end = "")
+            print()
+        exit()
+
+
+board = []
+for i in range(5):
+    board.append(list(input()))
+
+numbers = []
+for i in range(5):
+    for j in range(9):
+        if board[i][j] != '.':
+            numbers.append(board[i][j])
+
+combination = [0 for _ in range(12)]
+visited = [0 for _ in range(13)]
+combination_depth = 12
+visit_check()
+lst = []
+make_combination(0)
