@@ -1,0 +1,54 @@
+def find_combination(depth):
+    global combination
+    global answer
+    count = 0
+    if depth >= 1:
+        count = check_eggs()
+        if count + (N - depth) * 2 <= answer:
+            return
+
+    if depth == N:
+        count = check_eggs()
+        answer = max(answer, count)
+        return
+
+    for i in range(N):
+        if i == depth:
+            continue
+        combination.append(i)
+        #현재 선택된 계란 조합을 서로 침
+        s, w = eggs[depth]
+        s2, w2 = eggs[combination[depth]]
+        if s > 0 and s2 > 0:
+            ns = s - w2
+            ns2 = s2 - w
+            #치고난 후 계란의 내구도를 저장해줌
+            eggs[depth] = (ns, w)
+            eggs[combination[depth]] = (ns2, w2)
+        #다음 방문
+        find_combination(depth + 1)
+        #다음 방문을 위해 계란의 내구도를 돌려줌
+        eggs[depth] = (s, w)
+        eggs[combination[depth]] = (s2, w2)
+        combination.pop()
+        
+
+def check_eggs():
+    count = 0
+    for i in range(N):
+        s, w = eggs[i]
+        if s <= 0:
+            count += 1
+    return count
+
+
+
+N = int(input())
+eggs = []
+for _ in range(N):
+    eggs.append(tuple(map(int, input().split())))
+
+combination = []
+answer = 0
+find_combination(0)
+print(answer)
