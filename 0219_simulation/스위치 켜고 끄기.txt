@@ -1,0 +1,52 @@
+def solve(s, num):
+    global switches
+    #남자
+    if s == 1:
+        for i in range(1, N + 1):
+            if i % num == 0:
+                if switches[i] == 0:
+                    switches[i] = 1
+                    continue
+                # swithces의 해당 요소가 1일경우
+                switches[i] = 0
+
+    # 여자
+    if s == 2:
+        left_idx = num
+        right_idx = num
+
+        while True:
+            if left_idx - 1 < 1 or right_idx + 1 > N:
+                break
+            if switches[left_idx - 1] != switches[right_idx + 1]:
+                break
+
+            left_idx -= 1
+            right_idx += 1
+            continue
+
+        for i in range(left_idx, right_idx + 1):
+            if switches[i] == 0:
+                switches[i] = 1
+                continue
+            # swithces의 해당 요소가 1일경우
+            switches[i] = 0
+
+
+N = int(input())
+switches = [0] + list(map(int, input().split()))
+students_cnt = int(input())
+students = []
+for _ in range(students_cnt):
+    # 1 : 남자 2: 여자
+    s, num = map(int, input().split())
+    students.append((s, num))
+
+for s, num in students:
+    solve(s, num)
+
+for i in range(1, N + 1, 20):
+    if i + 20 < N + 1:
+        print(*switches[i : i + 20])
+        continue
+    print(*switches[i : N + 1])
