@@ -1,0 +1,66 @@
+move = ((-1, 2), (1, 2), (2, 1), (2, -1), (1, -2), (-1, -2), (-2, -1), (-2, 1))
+def solve():
+    global visited
+
+    #1 시작과 끝을 검사
+    is_finished = check_first_last()
+    if not is_finished:
+        return 'Invalid'
+
+    #2. 칸 방문
+    #마지막에서 한 칸 위치까지 검사 -> 다음 위치까지 검사하는게 배열 초과될 수 있기 때문
+    for i in range(35):
+        r, c = path[i]
+        nr, nc = path[i + 1]
+
+        is_correct = False
+        for dx, dy in move:
+            i, j = r + dx, c + dy
+            if nr == i and nc == j:
+                is_correct = True
+                break
+
+        if not is_correct:
+            return 'Invalid'
+
+        visited[r][c] = 1
+        visited[nr][nc] = 1
+
+    # 3. 모든 칸 방문했는지 확인
+    count = 0
+    for row in visited:
+        count += sum(row)
+
+    if count != 36:
+        return 'Invalid'
+
+    return 'Valid'
+
+
+def check_first_last():
+    is_finished = False
+    si, sj = path[0]
+    ei, ej = path[-1]
+    for dx, dy in move:
+        r, c = si + dx, sj + dy
+        if r == ei and c == ej:
+            is_finished = True
+            break
+
+    return is_finished
+
+
+path = []
+col_idx = 'ABCDEF'
+for _ in range(36):
+    idx = str(input())
+    #col은 알파벳으로 주어지기 때문에 따로 처리
+    col = idx[0]
+    col = col_idx.index(col)
+    row = int(idx[1]) - 1
+    path.append((row, col))
+
+visited = [[0 for _ in range(6)]for _ in range(6)]
+answer = solve()
+
+print(answer)
