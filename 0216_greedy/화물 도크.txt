@@ -1,0 +1,25 @@
+T = int(input())
+
+for tc in range(1, T + 1):
+    N = int(input())
+
+    work = []
+    for _ in range(N):
+        s, e = map(int, input().split())
+        work.append((s, e))
+
+    work.sort(key = lambda x : x[1])
+
+    count = 1
+    schedule = [work[0]]
+    for i in range(1, len(work)):
+        ls, le = schedule[-1]
+        ns, ne = work[i]
+
+        if ns < le:
+            continue
+
+        count += 1
+        schedule.append((ns, ne))
+
+    print(f"#{tc} {count}")
