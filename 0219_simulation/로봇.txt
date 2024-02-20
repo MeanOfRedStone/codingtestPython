@@ -1,0 +1,53 @@
+move = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+
+def robot(i, j, command, numb):
+    global move_idx
+    if command == 'TURN':
+        if numb == 0:
+            if move_idx == 0:
+                move_idx = 3
+                return i, j, True
+
+            move_idx -= 1
+            return i, j, True
+
+        #오른쪽으로 회전
+        if numb == 1:
+            move_idx = (move_idx + 1) % 4
+            return i, j, True
+
+    if command == 'MOVE':
+        mi, mj = move[move_idx]
+
+        # 유효성 검사 범위는 M + 1까지이다
+        nr = i + mi * numb
+        nc = j + mj * numb
+        if nr < 0 or nr > M or nc < 0 or nc > M:
+            return i, j, False
+
+        return nr, nc, True
+
+
+
+
+#주의! : board의 크기는 0 ~ M로 만들어야 함
+M, n = map(int, input().split())
+
+commands = []
+for _ in range(n):
+    command, numb = map(str, input().split())
+    commands.append((command, int(numb)))
+
+#첫 시작 위치(0, 0)
+r, c = M, 0
+move_idx = 0
+
+
+for command, numb in commands:
+    ni, nj, valid = robot(r, c, command, numb)
+    r, c = ni, nj
+    if not valid:
+        print(-1)
+        exit()
+
+print(f"{c} {M - r}")
