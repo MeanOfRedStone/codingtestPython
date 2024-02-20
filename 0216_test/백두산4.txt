@@ -1,0 +1,79 @@
+from collections import deque
+
+
+def bfs(si, sj):
+    # 모든 마그마의 위치를 방문하여 최대 깊이를 찾아준다
+    # 현재 최대 깊이를 전체 최대 깊이와 비교해 최댓값을 갱신
+    global max_depth
+    global depth
+
+    max_value = 0
+    mi, mj = -1, -1
+    visited = [[0 for _ in range(M)] for _ in range(N)]
+
+    queue = deque()
+    visited[si][sj] = 1
+    queue.append((si, sj))
+
+    while queue:
+        r, c = queue.popleft()
+        value = visited[r][c]
+        if value > max_value:
+            max_value = value
+            mi, mj = r, c
+
+        for dx, dy in ((0, 1), (1, 0), (0, -1), (-1, 0)):
+            nr, nc = r + dx, c + dy
+            #범위 체크
+            if nr < 0 or nr == N or nc < 0 or nc == M:
+                continue
+            # 방문한 곳은 건너 뜀
+            if visited[nr][nc] != 0:
+                continue
+            # 0 : 암석은 방문하지 않는다
+            if board[nr][nc] == 0:
+                continue
+
+            #방문 : 깊이를 측정하기 위해 현재 위치 다음 cnt + 1을 기입
+            visited[nr][nc] = visited[r][c] + 1
+            queue.append((nr, nc))
+    #현재 최댓값을 기록
+    depth[mi][mj] = max(depth[mi][mj], max_value)
+    #현재 최댓값을 전체 최댓값과 갱신
+    max_depth = max(max_depth, max_value)
+
+
+def check():
+    global answers
+
+    for i in range(N):
+        for j in range(M):
+            if depth[i][j] == max_depth:
+                answers.append((i, j))
+
+    answers.sort(key = lambda x : (x[0] + x[1], x[0]))
+
+
+T = int(input())
+
+for tc in range(1, T + 1):
+    N, M = map(int, input().split())
+    #1 : 마그마 0 : 암석
+    board = []
+    for _ in range(N):
+        board.append(list(map(int, input().split())))
+    #최대 깊이 기록용 배열
+    depth = [[0 for _ in range(M)] for _ in range(N)]
+    #전체 최댓값
+    max_depth = 0
+    for i in range(N):
+        for j in range(M):
+            #모두 방문해 준다
+            # 1: 마그마만 방문한다
+            if board[i][j] == 1:
+                bfs(i, j)
+
+    answers = []
+    check()
+    #문제에서 1행 1열부터 시작하기 때문에 1을 각가 더해준다
+    print(f"#{tc} {answers[0][0] + 1} {answers[0][1] + 1}")
