@@ -1,0 +1,63 @@
+from collections import deque
+
+
+def melt():
+    global cheese
+
+    #[1]
+    visited = [[0 for _ in range(M)]for _ in range(N)]
+    #[2]
+    melting_cheese = []
+    #[3]
+    queue = deque()
+    queue.append((0, 0))
+    visited[0][0] = 1
+
+    #[4]
+    while queue:
+        r, c = queue.popleft()
+
+        for dx, dy in ((0, 1), (1, 0), (0, -1), (-1, 0)):
+            nr, nc = r + dx, c + dy
+            #인덱스 체크
+            if nr < 0 or nr == N or nc < 0 or nc == M:
+                continue
+
+            #2)
+            #(1) 치즈일 경우
+            if cheese[nr][nc] == 1:
+                visited[nr][nc] += 1
+                if visited[nr][nc] == 2:
+                    melting_cheese.append((nr, nc))
+                continue
+
+            # (2) 치즈가 아닐경우
+            if visited[nr][nc] == 1:
+                continue
+            #(2)
+            visited[nr][nc] = 1
+            queue.append((nr, nc))
+
+
+    #[5]
+    if not melting_cheese:
+        return 0
+
+    #[6]
+    for r, c in melting_cheese:
+        cheese[r][c] = 0
+
+    return 1
+
+
+N, M  = map(int, input().split())
+cheese = []
+for _ in range(N):
+    cheese.append(list(map(int, input().split())))
+is_cheese = 1
+day = 0
+while is_cheese == 1:
+    day += 1
+    is_cheese = melt()
+
+print(day - 1)
