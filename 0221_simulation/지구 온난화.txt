@@ -1,0 +1,75 @@
+from collections import deque
+
+
+def bfs(i, j):
+    global island_to_sea
+    global visited
+
+    queue = deque()
+    queue.append((i, j))
+    visited[i][j] = 1
+
+    while queue:
+        r, c = queue.popleft()
+
+        count = 0
+        #바다 체크
+        for dx, dy in ((0, 1), (1, 0), (0, -1), (-1, 0)):
+            nr, nc = r + dx, c + dy
+            if nr < 0 or nr == R or nc < 0 or nc == C:
+                count += 1
+                continue
+            if visited[nr][nc] == 1:
+                continue
+
+            #바다인경우 -> count만 체크하고 넘어간다
+            if board[nr][nc] == '.':
+                count += 1
+                continue
+
+            #육지인경우 -> 방문 표시하고 큐에 넣어줌
+            if board[nr][nc] == 'X':
+                visited[nr][nc] = 1
+                queue.append((nr, nc))
+
+        #현재 땅이 3면 이상 바다에 둘러쌓인 경우 삭제 리스트에 넣어준다
+        if count >= 3:
+            island_to_sea.append((r, c))
+
+R, C = map(int, input().split())
+board = []
+for _ in range(R):
+    board.append(list(input()))
+
+# [1] 삭제 리스트, 방문 리스트 생성
+island_to_sea = []
+visited = [[0 for _ in range(C)]for _ in range(R)]
+
+# [2] 모든 육지 BFS
+for i in range(R):
+    for j in range(C):
+        if board[i][j] == 'X' and visited[i][j] == 0:
+            bfs(i, j)
+
+# [3] 삭제리스트 모두 X -> .으로
+for r, c in island_to_sea:
+    board[r][c] = '.'
+
+#[4] 지도 범위 확인
+min_row = R
+min_col = C
+max_row = -1
+max_col = -1
+
+for i in range(R):
+    for j in range(C):
+        if board[i][j] == 'X':
+            min_row = min(min_row, i)
+            min_col = min(min_col, j)
+            max_row = max(max_row, i)
+            max_col = max(max_col, j)
+
+for i in range(min_row, max_row + 1):
+    for j in range(min_col , max_col + 1):
+        print(board[i][j], end ="")
+    print()
