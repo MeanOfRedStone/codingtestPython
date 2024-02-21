@@ -1,0 +1,47 @@
+def find_combination(depth, cnt):
+    global combination
+    global count
+    global answer
+
+    expected_cnt = cnt
+    for i in range(5 - depth, -1, -1):
+        expected_cnt += coins[i]
+
+    if expected_cnt <= count:
+        return
+
+    if depth == 6:
+        is_found = check()
+        if is_found == 1:
+            count = max(count, cnt)
+            answer = combination.copy()
+        return
+
+    for i in range(51):
+        if coins[5 - depth] < i:
+            continue
+        combination.append(i)
+        find_combination(depth + 1, cnt + i)
+        combination.pop()
+
+def check():
+    global answer
+
+    money = 0
+    money += (combination[0] + combination[1] * 5 + combination[2] * 10 + combination[3] * 50 + combination[4] * 100 + combination[5] * 500)
+
+    if money == W:
+        return 1
+    return 0
+
+
+W = int(input())
+coins = list(map(int, input().split()))
+
+combination = []
+answer = []
+count = 0
+find_combination(0, 0)
+print(count)
+for i in range(5, -1, -1):
+    print(answer[i], end = " ")
