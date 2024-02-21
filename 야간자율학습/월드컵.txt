@@ -1,0 +1,139 @@
+"""
+월드컵
+다른 재귀 호출하는 것을 플래그로 쓸 수 있다
+"""
+import sys
+sys.stdin = open("in.txt", "r")
+
+
+def check(result):
+    global answer
+    #[1]각 나라의 결과의 합이 5인가
+    for country in result:
+        if sum(country) != 5:
+            answer = 0
+            return
+
+    #[2] 무승부는 짝이 있어야 함
+    draw_cnt = 0
+    for i in range(len(result)):
+        w, d, l = result[i]
+
+        if draw_cnt == 0:
+            draw_cnt += d
+            continue
+        draw_cnt -= d
+
+    if draw_cnt != 0:
+        answer = 0
+        return
+
+
+
+def make_combination(depth):
+    global combination
+    if answer == 1:
+        return
+
+    if depth == 5:
+        flag = compare_5()
+        if not flag:
+            return
+
+    if depth == 15:
+        compare()
+        return
+
+
+    for i in range(2, -1, -1):
+        combination.append(i)
+        make_combination(depth + 1)
+        combination.pop()
+
+def compare_5():
+    global answer
+
+    compared_result = [[0 for _ in range(3)] for _ in range(6)]
+    lst1 = combination[0:5]
+
+
+    idx = 1
+    for i in range(len(lst1)):
+        compared_result[0][2 - lst1[i]] += 1
+        compared_result[idx][lst1[i]] += 1
+        idx += 1
+
+    if compared_result[0] != result[0]:
+        return False
+
+    return True
+
+def compare():
+    global answer
+
+    compared_result = [[0 for _ in range(3)] for _ in range(6)]
+    lst1 = combination[0:5]
+    lst2 = combination[5:9]
+    lst3 = combination[9:12]
+    lst4 = combination[12:14]
+    lst5 = combination[14:]
+
+    idx = 1
+    for i in range(len(lst1)):
+        compared_result[0][2 - lst1[i]] += 1
+        compared_result[idx][lst1[i]] += 1
+        idx += 1
+
+    idx = 2
+    for i in range(len(lst2)):
+        compared_result[1][2 - lst2[i]] += 1
+        compared_result[idx][lst2[i]] += 1
+        idx += 1
+
+
+    idx = 3
+    for i in range(len(lst3)):
+        compared_result[2][2 - lst3[i]] += 1
+        compared_result[idx][lst3[i]] += 1
+        idx += 1
+
+    idx = 4
+    for i in range(len(lst4)):
+        compared_result[3][2 - lst4[i]] += 1
+        compared_result[idx][lst4[i]] += 1
+        idx += 1
+
+    idx = 5
+    compared_result[4][2 - lst5[0]] += 1
+    compared_result[idx][lst5[0]] += 1
+
+
+    if compared_result == result:
+        answer = 1
+
+
+results = []
+for _ in range(4):
+    result = []
+
+    information_input = list(map(int, input().split()))
+    for i in range(6):
+        result.append(list(information_input[3 * i : 3 * (i + 1)]))
+
+    results.append(result)
+
+combination = []
+answers = []
+answer = -1
+for result in results:
+    answer = -1
+
+    if answer == 0:
+        answers.append(answer)
+        continue
+    make_combination(0)
+    if answer == -1:
+        answer = 0
+    answers.append(answer)
+
+print(*answers)
