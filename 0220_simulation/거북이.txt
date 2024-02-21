@@ -1,0 +1,64 @@
+dir = [(-1, 0), (0, 1), (1, 0), (0, -1)]
+
+def control_turtle(order):
+    global dir_idx
+    global r
+    global c
+    global lst
+
+
+    for command in order:
+        if command == 'L':
+            if dir_idx == 0:
+                dir_idx = 3
+                continue
+            dir_idx -= 1
+
+        if command == 'R':
+            dir_idx = (dir_idx + 1) % 4
+
+        if command == 'F':
+            dx, dy = dir[dir_idx]
+            r += dx
+            c += dy
+            lst.append((r, c))
+
+        if command == 'B':
+            dx, dy = dir[dir_idx]
+            r -= dx
+            c -= dy
+            lst.append((r, c))
+
+
+def find_rectangle(lst):
+    max_row = -500
+    max_col = -500
+    min_row = 500
+    min_col = 500
+
+    for i, j in lst:
+        max_row = max(i, max_row)
+        max_col = max(j, max_col)
+        min_row = min(i, min_row)
+        min_col = min(j, min_col)
+
+    width = abs(max_row - min_row)
+    height = abs(max_col - min_col)
+    return width * height
+
+T = int(input())
+
+controls = []
+for _ in range(T):
+    controls.append(list(input()))
+
+
+
+for order in controls:
+    lst = []
+    r, c = 0, 0
+    lst.append([r, c])
+    dir_idx = 0
+    control_turtle(order)
+    answer = find_rectangle(lst)
+    print(answer)
