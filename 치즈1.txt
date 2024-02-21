@@ -1,0 +1,62 @@
+from collections import deque
+
+
+def melt():
+    global cheese
+    global count_lst
+
+    #[1]
+    visited = [[0 for _ in range(M)]for _ in range(N)]
+    #[2]
+    melting_cheese = []
+    #[3]
+    queue = deque()
+    queue.append((0, 0))
+    visited[0][0] = 1
+
+    #[4]
+    while queue:
+        r, c = queue.popleft()
+
+        for dx, dy in ((0, 1), (1, 0), (0, -1), (-1, 0)):
+            nr, nc = r + dx, c + dy
+            #1)
+            if visited[nr][nc] == 1:
+                continue
+            #2)
+            #(1)
+            if cheese[nr][nc] == 1:
+                visited[nr][nc] = 1
+                melting_cheese.append((nr, nc))
+                continue
+
+            #(2)
+            visited[nr][nc] = 1
+            queue.append((nr, nc))
+
+
+    #[5]
+    if not melting_cheese:
+        return 0, 0
+
+    #[6]
+    for r, c in melting_cheese:
+        cheese[r][c] = 0
+
+    count_lst.append(len(melting_cheese))
+    return 1
+
+
+N, M  = map(int, input().split())
+cheese = []
+for _ in range(N):
+    cheese.append(list(map(int, input().split())))
+count_lst = []
+is_cheese = 1
+day = 0
+while is_cheese == 1:
+    day += 1
+    is_cheese = melt()
+
+print(day - 1)
+print(count_lst[-1])
