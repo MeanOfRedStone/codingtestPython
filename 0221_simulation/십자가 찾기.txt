@@ -1,0 +1,109 @@
+from collections import deque
+
+def bfs(i, j):
+    global visited
+    global cross
+
+    queue = deque()
+    visited[i][j] = 1
+    queue.append((i, j))
+
+    while queue:
+        r, c = queue.popleft()
+
+        is_cross, size = check_cross(r, c)
+
+        if is_cross:
+            cross.append((r, c, size))
+
+        for dx, dy in ((0, 1), (1, 0), (0, -1), (-1, 0)):
+            nr, nc = r + dx, c + dy
+
+            if nr < 0 or nr == N or nc < 0 or nc == M:
+                continue
+
+            if visited[nr][nc] == 1:
+                continue
+
+            if board[nr][nc] == '.':
+                continue
+
+            visited[nr][nc] = 1
+            queue.append((nr, nc))
+
+
+def check_cross(i, j):
+
+    cross = [0, 0, 0, 0]
+    idx = 0
+    for dx, dy in ((0, 1), (1, 0), (0, -1), (-1, 0)):
+        size = 0
+        nr = i
+        nc = j
+        dot = board[nr][nc]
+
+        while dot == '*':
+            nr += dx
+            nc += dy
+            size += 1
+            if nr < 0 or nr == N or nc < 0 or nc == M:
+                break
+            dot = board[nr][nc]
+
+        cross[idx] = size - 1
+        idx += 1
+
+    is_cross = True
+    for length in cross:
+        if length == 0:
+            is_cross = False
+            return is_cross, 0
+
+    return is_cross, min(cross)
+
+
+def check():
+    temp = [['.' for _ in range(M)]for _ in range(N)]
+    for r, c, size in cross:
+        temp[r][c] = '*'
+
+        for dx, dy in ((0, 1), (1, 0), (0, -1), (-1, 0)):
+            nr = r
+            nc = c
+            for _ in range(size):
+                nr += dx
+                nc += dy
+                temp[nr][nc] = '*'
+
+
+    is_answer = True
+    for i in range(N):
+        if temp[i] != board[i]:
+            is_answer = False
+            return is_answer, 0
+
+    return is_answer, len(cross)
+
+
+N, M = map(int, input().split())
+board = []
+for _ in range(N):
+    board.append(list(input()))
+
+
+visited = [[0 for _ in range(M)]for _ in range(N)]
+cross = []
+for i in range(N):
+    for j in range(M):
+        if board[i][j] == '*' and visited[i][j] == 0:
+            bfs(i, j)
+
+answer, size = check()
+
+if answer:
+    print(size)
+    for r, c, size in cross:
+        print(r + 1, c + 1, size)
+
+if not answer:
+    print(-1)
