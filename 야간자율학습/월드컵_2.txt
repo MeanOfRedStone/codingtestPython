@@ -1,0 +1,125 @@
+def check(result):
+    global answer
+
+    # [1]각 나라의 결과의 합이 5인가
+    for country in result:
+        if sum(country) != 5:
+            answer = 0
+            return
+
+    # [2] 무승부는 짝이 있어야 함
+    draw_cnt = 0
+    for i in range(len(result)):
+        w, d, l = result[i]
+
+        if draw_cnt == 0:
+            draw_cnt += d
+            continue
+        draw_cnt -= d
+
+    if draw_cnt != 0:
+        answer = 0
+        return
+
+
+def make_combination(depth):
+    global combination
+    global compared_result
+    global answer
+
+    if answer == 1:
+        return
+
+    if depth == 5:
+        if compared_result[0] != result[0]:
+            return
+
+    if depth == 9:
+        if compared_result[1] != result[1]:
+            return
+
+    if depth == 12:
+        if compared_result[2] != result[2]:
+            return
+
+    if depth == 14:
+        if compared_result[3] != result[3]:
+            return
+
+
+    if depth == 15:
+        if compared_result == result:
+            answer = 1
+            return
+        return
+    for i in range(2, -1, -1):
+        combination.append(i)
+        if 0 <= depth < 5:
+            compared_result[0][2 - combination[depth]] += 1
+            compared_result[depth + 1][combination[depth]] += 1
+
+        if 5 <= depth < 9:
+            compared_result[1][2 - combination[depth]] += 1
+            compared_result[depth - 3][combination[depth]] += 1
+
+        if 9 <= depth < 12:
+            compared_result[2][2 - combination[depth]] += 1
+            compared_result[depth - 6][combination[depth]] += 1
+
+        if 12 <= depth < 14:
+            compared_result[3][2 - combination[depth]] += 1
+            compared_result[depth - 8][combination[depth]] += 1
+
+        if 14 <= depth < 15:
+            compared_result[4][2 - combination[depth]] += 1
+            compared_result[depth - 9][combination[depth]] += 1
+
+        make_combination(depth + 1)
+        if 0 <= depth < 5:
+            compared_result[0][2 - combination[depth]] -= 1
+            compared_result[depth + 1][combination[depth]] -= 1
+
+        if 5 <= depth < 9:
+            compared_result[1][2 - combination[depth]] -= 1
+            compared_result[depth - 3][combination[depth]] -= 1
+
+        if 9 <= depth < 12:
+            compared_result[2][2 - combination[depth]] -= 1
+            compared_result[depth - 6][combination[depth]] -= 1
+
+        if 12 <= depth < 14:
+            compared_result[3][2 - combination[depth]] -= 1
+            compared_result[depth - 8][combination[depth]] -= 1
+
+        if 14 <= depth < 15:
+            compared_result[4][2 - combination[depth]] -= 1
+            compared_result[depth - 9][combination[depth]] -= 1
+        combination.pop()
+
+
+results = []
+for _ in range(4):
+    result = []
+
+    information_input = list(map(int, input().split()))
+    for i in range(6):
+        result.append(list(information_input[3 * i: 3 * (i + 1)]))
+
+    results.append(result)
+
+combination = []
+answers = []
+answer = -1
+for result in results:
+    answer = -1
+
+    if answer == 0:
+        answers.append(answer)
+        continue
+    compared_result = [[0 for _ in range(3)] for _ in range(6)]
+    make_combination(0)
+    if answer == -1:
+        answer = 0
+    answers.append(answer)
+
+print(*answers)
