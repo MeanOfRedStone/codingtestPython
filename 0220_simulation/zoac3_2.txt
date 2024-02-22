@@ -1,0 +1,49 @@
+sl, sr = map(str, input().split())
+string = list(input())
+
+keyboard = ['qwertyuiop', 'asdfghjkl-', 'zxcvbnm---']
+
+slr, slc = 0, 0
+srr, src = 0, 0
+for i in range(3):
+    if sl in keyboard[i]:
+        slr = i
+        slc = keyboard[i].index(sl)
+
+    if sr in keyboard[i]:
+        srr = i
+        src = keyboard[i].index(sr)
+
+
+time = 0
+moeum = 'yuiophjklbnm'
+jaeum = 'qwertasdfgzxcv'
+
+for alphabet in string:
+    if alphabet in moeum:
+        nr, nc = 0, 0
+        for i in range(3):
+            if alphabet in keyboard[i]:
+                nr = i
+                nc = keyboard[i].index(alphabet)
+                break
+
+        distance = abs(srr- nr) + abs(src -nc)
+        time += (distance + 1)
+        sr = alphabet
+        srr, src = nr, nc
+        continue
+
+    if alphabet in jaeum:
+        nr, nc = 0, 0
+        for i in range(3):
+            if alphabet in keyboard[i]:
+                nr = i
+                nc = keyboard[i].index(alphabet)
+                break
+
+        distance = abs(slr - nr) + abs(slc - nc)
+        time += (distance + 1)
+        sl = alphabet
+        slr, slc = nr, nc
+print(time)
