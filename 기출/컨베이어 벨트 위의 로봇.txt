@@ -1,0 +1,90 @@
+def move_belt():
+    global visited
+    global belt
+    #벨트 기준위치 기록
+    b_idx = 0
+    #부러진 벨트 기록
+    broken_belt = 0
+    #단계 기록
+    stage_count = 1
+
+    #[1] broken_belt K 미만일때까지 탐색
+    while True:
+        #[2] 벨트 회전
+        #1) 마지막 위치에 로봇이 있다면 내려준다
+        last_location = (b_idx + N - 1) % (2 * N)
+        if visited[last_location] == 1:
+            visited[last_location] = 0
+        #2) 회전
+        b_idx -= 1
+        if b_idx == -1:
+            b_idx = 2*N - 1
+
+        #[3] 로봇 이동(마지막 위치부터 b_idx + 1까지 탐색한다
+        robot_idx = (b_idx + (N - 1)) % (2 * N)
+        #1) 마지막 위치의 로봇이 있다면 내려준다
+        if visited[robot_idx] == 1:
+            visited[robot_idx] = 0
+        robot_idx -= 1
+        if robot_idx == -1:
+            robot_idx = 2 * N - 1
+
+        while robot_idx != b_idx:
+            n_robot_idx = (robot_idx + 1) % (2 * N)
+            #2) 현재위치에 로봇이 있다면 이동
+            if visited[robot_idx] == 1:
+                #(1) 제약조건 1 : 다음위치에 로봇이 있다면 이동 불가
+                if visited[n_robot_idx] == 1:
+                    robot_idx -= 1
+                    if robot_idx == -1:
+                        robot_idx = 2 * N - 1
+                    continue
+                #(2) 제약조건 2 : 내구도가 1보다 작은 위치라면 이동 불가
+                if belt[n_robot_idx] < 1:
+                    robot_idx -= 1
+                    if robot_idx == -1:
+                        robot_idx = 2 * N - 1
+                    continue
+
+                #(3) 이동할 수 있을때라면
+                #ㄱ - 이동시켜준다
+                visited[robot_idx] = 0
+                visited[n_robot_idx] = 1
+
+                #ㄴ - 다음위치 내구도 감소
+                belt[n_robot_idx] -= 1
+
+                #ㄷ - 다음 위치 내구도 감소후 0이라면 부서진 벨트 개수 += 1
+                if belt[n_robot_idx] == 0:
+                    broken_belt += 1
+
+            #3)다음 탐색 위치로 이동
+            robot_idx -= 1
+            if robot_idx == -1:
+                robot_idx = 2 * N - 1
+
+        #[4] 벨트 기준 위치에 로봇 적재
+        if belt[b_idx] != 0:
+            #1)로봇 적재
+            visited[b_idx] = 1
+            belt[b_idx] -= 1
+            #(1) 로봇 적재 후 내구도 0이 된다면 부서진 벨트 개수 += 1
+            if belt[b_idx] == 0:
+                broken_belt += 1
+
+        #[5] 부러진 벨트 수를 체크하고 K 이상이라면 종료
+        if broken_belt >= K:
+            break
+
+        #[6] 다음 스테이지로 이동
+        stage_count += 1
+
+    return stage_count
+
+N, K = map(int, input().split())
+belt = list(map(int, input().split()))
+visited = [0 for _ in range(2*N)]
+
+answer = move_belt()
+
+print(answer)
