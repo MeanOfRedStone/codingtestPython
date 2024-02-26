@@ -1,0 +1,69 @@
+"""
+<디버깅 포인트>
+1. 백준 기준으로 문제 조건을 제대로 확인하지 못한게 가장 컸습니다.
+1) 출력 조건
+2) 나누기 로직 구현
+
+오늘 실수가 많이 난 이유는 제 실력, 실수 둘 다 문제가 있다고 생각합니다. 애초에 실수를 한다하더라도 실력이 있었다면
+이정도까지 틀리지 않았을 것이라고 생각합니다. 문제 조건을 좀 더 명확히 체크하는 습관을 기르겠습니다.
+
+<풀이 과정>
+1. 코드 트리 풀이 1차 시도(정답 - 27분 소요)
+시간 복잡도를 계산해본 뒤 최대 10!로 1초의 시간 제한에도 완전탐색으로 충분히 풀이할 수 있을 것이라고 생각했습니다.
+
+2. 백준 풀이 시도 1 ~ 8차(정답까지 - 1시간 26분 소요)
+가장 큰 이유는 출력 순서가 다른 것이었습니다.
+이외에도 잘못된 언어선택과 나누기 로직의 잘못된 구현이었습니다.
+
+코드 트리와 문제가 다르다고 분명 알려주셨음에도 빠른 제출에 정신이 팔려 문제 조건이 다른 점을 숙지하지 못했습니다.
+틀리고 재확인 후에도 계속 틀렸습니다. 
+
+
+
+<기록 사항>
+1. 내가 꼼꼼한 편이라고 생각했는데 꼼꼼하지 못했다.
+앞으로 더 집중하자!
+"""
+
+def find_combination(depth, sum):
+    global mx
+    global mn
+    global com_visited
+    global combination
+
+    if depth == N - 1:
+        mx = max(mx, sum)
+        mn = min(mn, sum)
+        return
+
+    for i in range(4):
+        if operand_cnt[i] == 0:
+            continue
+
+        if i == 0:
+            nx_sum = sum + numbers[depth + 1]
+        if i == 1:
+            nx_sum = sum - numbers[depth + 1]
+        if i == 2:
+            nx_sum = sum * numbers[depth + 1]
+        if i == 3:
+            if numbers[depth+1] == 0:
+                continue
+            if sum < 0:
+                nx_sum = -1 * int(sum / numbers[depth + 1] * -1)
+            if sum >= 0:
+                nx_sum = sum // numbers[depth + 1]
+        operand_cnt[i] -= 1
+        find_combination(depth + 1, nx_sum)
+        operand_cnt[i] += 1
+
+
+N = int(input())
+numbers = list(map(int, input().split()))
+operand_cnt = list(map(int, input().split()))
+
+mx = -1_000_000_001
+mn = 1_000_000_001
+find_combination(0, numbers[0])
+print(mx)
+print(mn)
