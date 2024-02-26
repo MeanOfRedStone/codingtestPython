@@ -1,0 +1,141 @@
+"""
+<디버깅 포인트>
+1. 분리해야하는 for문과 while을 같은 부분에 사용했습니다.
+분리되어야 하는 while문과 for문이 있었는데 while문 아래 for문을 쓴 부분을 디버깅했습니다.('좌측 테이블 회전 체크'와 'rotation_check'대로 회전시킴 부분)
+코드를 길게 구현하는 편이라 발생한 실수라고 생각합니다.
+인덴트를 꼼꼼하게 체크했다고 생각했는데 그러지 못했습니다.
+-> 해결방안
+로직의 구상 단위별로 체크하며 진행했기 때문에 금방 실수를 발견할 수 있었습니다.
+조건 간 논리적인 중첩을 막기위해 길게짜는 편입니다.
+이러한 문제 풀이 방향이 저에게는 맞다고 생각해 유지하고자 합니다.
+저번에도 강사님과 얘기를 나누었을 때 함수의 분리 등을 고민했습니다.
+
+오늘 풀이를 통해 로직 단위 별로 진행 상황을 체크하면 길게 짜는 문제를 해결할 수 있을 것 같다고 생각했습니다.
+
+<풀이 과정>
+코드 트리에 먼저 제출 했습니다. 해당 사이트 기준으로 제출까지 1시간 15분 소요했습니다.
+
+1. 구상과 수도코드를 작성해 노트만 보면 바로 코드를 칠 수 있도록 사전작업을 진행합니다.
+다른 동기 분들에 비해 풀이 시간이 오래 걸리지만 이러한 스타일을 당분간 계속 가져려고 합니다.
+
+2. 저번 시간에 프로그램이 긴 편이라는 얘기를 들었습니다. 함수 단위별로 분리하는 방안 등 다른 방안을 고민해보라는 조언을 받았습니다.
+다른 방안 중 하나로 오늘은 로직 단위 별로 풀이 과정을 체크해보며 진행했습니다.
+그 결과 디버깅도 손 쉽게 할 수 있었고 코드를 꼼꼼히 조건을 중첩되지 않게 짜는 장점을 잘 살릴 수 있었다고 생각합니다.
+
+3. 인덱스를 빼며 루프를 도는 로직을 항상 지저분하게 처리했습니다. 하지만 오늘은 리나님 코드를 보고 뺀 뒤 나머지를
+구하면 인덱스가 유지된다는 것을 알게됐습니다. 앞으로 이러한 부분을 참조해 idx 변화를 잘 유지할 수 있을 것 같습니다.
+
+<기록 사항>
+1. 중간 중간 체크하는 것 계속 진행해보자
+2. 함수 분리는 너무 지저분한 것 같으면 시도하자
+3. idx 빼고 나머지 구해도 유지된다
+"""
+
+def turn_table(base_n, d):
+    global table_idx
+
+    #[1] 회전 테이블 확인
+    #회전 여부 표시 리스트
+    rotation_check = [-1, 0, 0, 0, 0]
+    #현재 테이블 회전 체크
+    rotation_check[base_n] = d
+    #1)우측 방향에 있는 테이블의 회전 여부 확인
+    tbl_n = base_n
+    next_tbl_n = tbl_n + 1
+    #다음 테이블이 4번째일때까지 확인
+    while next_tbl_n <= 4:
+        #(1)기준 테이블 우측 값 확인
+        tbl = tables[tbl_n]
+        tbl_idx = table_idx[tbl_n]
+        tbl_right_val = tbl[(tbl_idx + 2) % 8]
+        #(2)다음 테이블의 좌측 값 확인
+        next_tbl = tables[next_tbl_n]
+        next_tbl_idx = table_idx[next_tbl_n]
+        #next_tbl_left_idx = next_tbl_idx - 2
+        #if next_tbl_left_idx < 0:
+         #   next_tbl_left_idx += 8
+        next_tbl_left_val = next_tbl[(next_tbl_idx - 2) % 8]
+
+        #(3) 두 값이 같을 경우 우측의 테이블들은 더이상 회전하지 않음
+        if tbl_right_val == next_tbl_left_val:
+            break
+        # 두 값이 다를 경우 tbl의 회전과 반대로 회전하게 됨
+        rotation_check[next_tbl_n] = rotation_check[tbl_n] * -1
+
+        #(4) 오른쪽 테이블로 이동
+        tbl_n = next_tbl_n
+        next_tbl_n = tbl_n + 1
+
+    #2)좌측 방향에 있는 테이블의 회전 확인
+    tbl_n = base_n
+    next_tbl_n = tbl_n - 1
+    while next_tbl_n >= 1:
+        # (1)기준 테이블 좌측 값 확인
+        tbl = tables[tbl_n]
+        tbl_idx = table_idx[tbl_n]
+        #tbl_left_idx = tbl_idx - 2
+        #if tbl_left_idx < 0:
+        #    tbl_left_idx += 8
+        tbl_left_val = tbl[(tbl_idx - 2) % 8]
+
+        #(2) 다음 테이블의 우측 값 확인
+        next_tbl = tables[next_tbl_n]
+        next_tbl_idx = table_idx[next_tbl_n]
+        next_tbl_right_val = next_tbl[(next_tbl_idx + 2) % 8]
+
+        # (3) 두 값이 같을 경우 우측의 테이블들은 더이상 회전하지 않음
+        if tbl_left_val == next_tbl_right_val:
+            break
+        # 두 값이 다를 경우 tbl의 회전과 반대로 회전하게 됨
+        rotation_check[next_tbl_n] = rotation_check[tbl_n] * -1
+
+        # (4) 왼쪽 테이블로 이동
+        tbl_n = next_tbl_n
+        next_tbl_n = tbl_n - 1
+
+
+    #rotation_check대로 회전 시킴
+    for i in range(1, 5):
+        tbl_idx = table_idx[i]
+        rotation = rotation_check[i]
+        #시계 방향 회전
+        if rotation == 1:
+            tbl_idx -= 1
+            if tbl_idx == -1:
+                tbl_idx = 7
+            table_idx[i] = tbl_idx
+            continue
+        #반시계 방향 회전
+        if rotation == -1:
+            table_idx[i] = (tbl_idx + 1) % 8
+            continue
+
+
+def check_table():
+    weight = [0, 1, 2, 4, 8]
+    sum = 0
+    for i in range(1, 5):
+        table = tables[i]
+        idx = table_idx[i]
+        sum += int(table[idx]) * weight[i]
+
+    return sum
+
+
+
+#각 지역 12시 방향부터 시계 방향 순서대로 공백없이 0 : n극 1 : s극
+first = list(input())
+second = list(input())
+third = list(input())
+fourth = list(input())
+tables = [[], first, second, third, fourth]
+table_idx = [-1, 0, 0, 0, 0]
+k = int(input())
+for _ in range(k):
+    #d : 1 시계방향 , -1 : 반시계 방향
+    tbl_n, d = map(int, input().split())
+    turn_table(tbl_n, d)
+
+answer = check_table()
+
+print(answer)
