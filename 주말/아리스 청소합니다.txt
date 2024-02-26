@@ -1,0 +1,76 @@
+direction = [(-1, 0), (0, 1), (1, 0), (0, -1)]
+def on_robot():
+    global board
+
+    #[0] 자료구조 선언
+    count = 0
+    dirt_count = H * W
+    r, c = R, C
+    d_idx = D
+    last_count = 0
+
+    #[1] 제약조건일 때 까지 움직임
+    while True:
+        # print(f"이동 위치 {r} {c}")
+        # print(f"count : {count}")
+        #[2] 먼지 청소
+        is_cleaned = False
+        if board[r][c] == 1:
+            # print(f"청소할 때r, c {r} {c}")
+            board[r][c] = 0
+            is_cleaned = True
+            dirt_count -= 1
+            last_count = count
+
+        #[3] 회전
+        if is_cleaned:
+            rot = int(rule_A[r][c])
+            d_idx = (d_idx + rot) % 4
+        if not is_cleaned:
+            rot = int(rule_B[r][c])
+            d_idx = (d_idx + rot) % 4
+        
+        #[4] 전진 및 제약조건 확인
+        #1. 다음 위치
+        dx, dy = direction[d_idx]
+        nr, nc = r + dx, c + dy
+        #2. 제약1 - 인덱스 체크
+        if nr < 0 or nr == H or nc < 0 or nc == W:
+            break
+        #3. 제약2 - 먼지 체크
+        if dirt_count == 0:
+            break
+        #4. 제약3 - 먼지 청소할 일 없으면(무한루프)
+        if count > 8194 * H * W:
+            break
+        #5. 이동 및 count 증가
+        r, c = nr, nc
+        count += 1
+    
+    return last_count + 1
+
+#방의 크기
+H, W = map(int, input().split())
+
+#D 위쪽 수직을 기준으로 90 * D만큼 회전
+R, C, D = map(int,input().split())
+
+
+# 규칙표는 길이 W인 문자열 H개로 주어짐
+# 숫자 d는 90d 회전을 뜻함
+# 규칙표 A
+rule_A = []
+for _ in range(H):
+    rule_A.append(list(input()))
+# 규칙표 B
+rule_B = []
+for _ in range(H):
+    rule_B.append(list(input()))
+
+
+
+board = [[1 for _ in range(W)]for _ in range(H)]
+
+answer = on_robot()
+
+print(answer)
