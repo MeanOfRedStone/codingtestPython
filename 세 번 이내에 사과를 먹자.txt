@@ -1,0 +1,37 @@
+def eat_apple(i, j, depth, apple_cnt):
+    global visited
+    global answer
+
+    if depth == 3:
+        if apple_cnt >= 2:
+            answer = 1
+        return
+
+    visited[i][j] = 1
+
+    for dx, dy in ((0, 1), (1, 0), (0, -1), (-1, 0)):
+        ni, nj = i + dx, j + dy
+        if ni < 0 or ni == 5 or nj < 0 or nj == 5:
+            continue
+
+        if visited[ni][nj] == 1:
+            continue
+        if board[ni][nj] == -1:
+            continue
+
+        eat_apple(ni, nj, depth + 1, apple_cnt + board[ni][nj])
+
+    visited[i][j] = 0
+
+
+
+board = []
+for _ in range(5):
+    board.append(list(map(int, input().split())))
+
+r, c = map(int, input().split())
+visited = [[0 for _ in range(5)]for _ in range(5)]
+
+answer = 0
+eat_apple(r, c, 0, 0)
+print(answer)
