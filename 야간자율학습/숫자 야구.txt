@@ -1,0 +1,54 @@
+def find_combination(depth):
+    global combination
+    global visited
+    global answer
+
+    if depth == 3:
+        is_success = check_combination()
+        if is_success:
+            answer += 1
+        return
+
+    for i in range(1, 10):
+        if visited[i] == 1:
+            continue
+
+        visited[i] = 1
+        combination.append(i)
+        find_combination(depth+ 1)
+        visited[i] = 0
+        combination.pop()
+        visited[i] = 0
+
+def check_combination():
+    for quest, strike, ball in question_and_result:
+        strike_cnt = 0
+        ball_cnt = 0
+
+        quest_str = str(quest)
+        for i in range(3):
+            quest_number = int(quest_str[i])
+            if quest_number in combination:
+                if combination[i] == quest_number:
+                    strike_cnt += 1
+                    continue
+                ball_cnt += 1
+
+        if strike_cnt != strike or ball_cnt != ball:
+            return False
+
+    return True
+
+
+N = int(input())
+
+question_and_result = []
+for _ in range(N):
+    question, strike, ball = map(int, input().split())
+    question_and_result.append((question, strike, ball))
+
+answer = 0
+combination = []
+visited = [0 for _ in range(10)]
+find_combination(0)
+print(answer)
