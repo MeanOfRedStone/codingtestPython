@@ -1,0 +1,96 @@
+def turn_table(base_n, d):
+    global table_idx
+
+    #[1] 회전 테이블 확인
+    #회전 여부 표시 리스트
+    rotation_check = [-1, 0, 0, 0, 0]
+    #현재 테이블 회전 체크
+    rotation_check[base_n] = d
+    #1)우측 방향에 있는 테이블의 회전 여부 확인
+    tbl_n = base_n
+    next_tbl_n = tbl_n + 1
+    #다음 테이블이 4번째일때까지 확인
+    while next_tbl_n <= 4:
+        #(1)기준 테이블 우측 값 확인
+        tbl = tables[tbl_n]
+        tbl_right_val = tbl[2]
+        #(2)다음 테이블의 좌측 값 확인
+        next_tbl = tables[next_tbl_n]
+        next_tbl_left_val = next_tbl[- 2 % 8]
+
+        #(3) 두 값이 같을 경우 우측의 테이블들은 더이상 회전하지 않음
+        if tbl_right_val == next_tbl_left_val:
+            break
+        # 두 값이 다를 경우 tbl의 회전과 반대로 회전하게 됨
+        rotation_check[next_tbl_n] = rotation_check[tbl_n] * -1
+
+        #(4) 오른쪽 테이블로 이동
+        tbl_n = next_tbl_n
+        next_tbl_n = tbl_n + 1
+
+    #2)좌측 방향에 있는 테이블의 회전 확인
+    tbl_n = base_n
+    next_tbl_n = tbl_n - 1
+    while next_tbl_n >= 1:
+        # (1)기준 테이블 좌측 값 확인
+        tbl = tables[tbl_n]
+        tbl_left_val = tbl[-2 % 8]
+
+        #(2) 다음 테이블의 우측 값 확인
+        next_tbl = tables[next_tbl_n]
+        next_tbl_right_val = next_tbl[2]
+
+        # (3) 두 값이 같을 경우 우측의 테이블들은 더이상 회전하지 않음
+        if tbl_left_val == next_tbl_right_val:
+            break
+        # 두 값이 다를 경우 tbl의 회전과 반대로 회전하게 됨
+        rotation_check[next_tbl_n] = rotation_check[tbl_n] * -1
+
+        # (4) 왼쪽 테이블로 이동
+        tbl_n = next_tbl_n
+        next_tbl_n = tbl_n - 1
+
+
+    #rotation_check대로 회전 시킴
+    for i in range(1, 5):
+        tbl = tables[i]
+        rotation = rotation_check[i]
+        #시계 방향 회전
+        if rotation == 1:
+            tbl = tbl[-1:] + tbl[:-1]
+            tables[i] = tbl
+            continue
+        #반시계 방향 회전
+        if rotation == -1:
+            tbl = tbl[1:] + tbl[:1]
+            tables[i] = tbl
+            continue
+
+
+def check_table():
+    weight = [0, 1, 2, 4, 8]
+    sum = 0
+    for i in range(1, 5):
+        table = tables[i]
+        sum += int(table[0]) * weight[i]
+
+    return sum
+
+
+
+#각 지역 12시 방향부터 시계 방향 순서대로 공백없이 0 : n극 1 : s극
+first = list(input())
+second = list(input())
+third = list(input())
+fourth = list(input())
+tables = [[], first, second, third, fourth]
+
+k = int(input())
+for _ in range(k):
+    #d : 1 시계방향 , -1 : 반시계 방향
+    tbl_n, d = map(int, input().split())
+    turn_table(tbl_n, d)
+
+answer = check_table()
+
+print(answer)
