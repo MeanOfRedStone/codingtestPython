@@ -1,0 +1,25 @@
+def find_money(day, money):
+    global answer
+    global work_visited
+
+    if day >= N:
+        answer = max(answer, money)
+        return
+
+    t, p = work[day]
+    #0부터 카운트 해주니 N이랑 같은 값일때까지 가능
+    if day + t <= N:
+        find_money(day + t, money + p)
+
+    find_money(day + 1, money)
+N = int(input())
+
+work = []
+for i in range(1, N + 1):
+    t, p = map(int, input().split())
+    work.append((t, p))
+
+work_visited = [0 for _ in range(N)]
+answer = 0
+find_money(0, 0)
+print(answer)
