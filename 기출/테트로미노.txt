@@ -1,0 +1,77 @@
+def find_block(r, c, depth):
+    global visited
+    global combination
+    global answer
+    #[1] 종료
+    if depth == 4:
+        val = check_sum()
+        answer = max(answer, val)
+        return
+
+    #[2] 로직
+    visited[r][c] = 1
+    combination.append((r, c))
+    #[3] 다음 방문
+    for dx, dy in ((0, 1), (1, 0), (0, -1), (-1, 0)):
+        #1) nr, nc
+        nr, nc = r + dx, c + dy
+        #2) 범위 체크
+        if nr < 0 or nr == N or nc < 0 or nc == M:
+            continue
+        #3) 보드 체크
+        if visited[nr][nc] == 1:
+            continue
+        #4) 다음 방문
+        find_block(nr, nc, depth + 1)
+
+    #[4] 방문 해제
+    visited[r][c] = 0
+    combination.pop()
+
+case = [[(0, 1), (0, -1), (1, 0)], [(0, 1), (0, -1), (-1, 0)], [(1, 0), (-1, 0), (0, 1)], [(1, 0), (-1, 0), (0, -1)]]
+def find_extra_case(i, j):
+    global answer
+
+    for shape in case:
+        value = 0
+        r, c = i, j
+        value += board[r][c]
+        for dx, dy in shape:
+            is_sum = True
+            nr, nc = r + dx, c + dy
+            if nr < 0 or nr == N or nc < 0 or nc == M:
+                is_sum = False
+                break
+
+            value += board[nr][nc]
+
+        if is_sum:
+            answer = max(answer, value)
+
+
+
+
+def check_sum():
+    value = 0
+    for r, c in combination:
+        value += board[r][c]
+
+    return value
+
+
+
+N, M = map(int, input().split())
+
+board = []
+for _ in range(N):
+    board.append(list(map(int, input().split())))
+
+visited = [[0 for _ in range(M)]for _ in range(N)]
+
+combination = []
+answer = 0
+for i in range(N):
+    for j in range(M):
+        find_block(i, j, 0)
+        find_extra_case(i, j)
+print(answer)
