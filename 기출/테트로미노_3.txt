@@ -1,0 +1,50 @@
+def find_block(r, c, depth, sum):
+    global visited
+    global combination
+    global answer
+    #[1] 종료
+    if depth == 4:
+        answer = max(answer, sum)
+        return
+
+
+    #[3] 다음 방문
+    for i, j in combination:
+        for dx, dy in ((0, 1), (1, 0), (0, -1), (-1, 0)):
+            #1) nr, nc
+            nr, nc = i + dx, j + dy
+            #2) 범위 체크
+            if nr < 0 or nr == N or nc < 0 or nc == M:
+                continue
+            #3) 보드 체크
+            if visited[nr][nc] == 1:
+                continue
+
+            visited[nr][nc] = 1
+            combination.append((nr, nc))
+            #4) 다음 방문
+            find_block(nr, nc, depth + 1, sum + board[nr][nc])
+            visited[nr][nc] = 0
+            combination.pop()
+
+
+
+N, M = map(int, input().split())
+
+board = []
+for _ in range(N):
+    board.append(list(map(int, input().split())))
+
+visited = [[0 for _ in range(M)]for _ in range(N)]
+
+combination = []
+answer = 0
+for i in range(N):
+    for j in range(M):
+        visited[i][j] = 1
+        combination.append((i, j))
+        find_block(i, j, 1, board[i][j])
+        visited[i][j] = 0
+        combination.pop()
+
+print(answer)
