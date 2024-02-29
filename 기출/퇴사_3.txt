@@ -1,0 +1,26 @@
+def find_money(day, money):
+    global answer
+    global work_visited
+
+    if money > answer:
+        answer = money
+
+
+
+    for i in range(day + 1, N + 1):
+        t, p = work[i]
+        if i + t - 1 > N:
+            continue
+        find_money(i + t - 1 , money + p)
+
+N = int(input())
+
+work = [(-1, -1)]
+for i in range(1, N + 1):
+    t, p = map(int, input().split())
+    work.append((t, p))
+
+work_visited = [0 for _ in range(N)]
+answer = 0
+find_money(0, 0)
+print(answer)
