@@ -1,0 +1,71 @@
+def find_position(depth):
+    global visited
+    global position
+    global answer
+    global position_visited
+
+    if depth == 7:
+        check_position()
+        return
+
+    if depth == 0:
+        for i in range(5):
+            for j in range(5):
+                visited[i][j] = 1
+                position.append((i, j))
+                find_position(depth + 1)
+                visited[i][j] = 0
+                position.pop()
+
+    if depth > 0:
+        for element in position:
+            i = element[0]
+            j = element[1]
+            for dx, dy in ((0, 1), (1, 0), (0, -1), (-1, 0)):
+                ni, nj = i + dx, j + dy
+
+                if ni < 0 or ni == 5 or nj < 0 or nj == 5:
+                    continue
+
+                if visited[ni][nj] == 1:
+                    continue
+
+                visited[ni][nj] = 1
+                position.append((ni, nj))
+                find_position(depth + 1)
+                visited[ni][nj] = 0
+                position.pop()
+
+
+def check_position():
+    global position_visited
+
+    checked = sorted(position, key = lambda x: (x[0], x[1]))
+
+    Y_count = 0
+    S_count = 0
+
+    check_lst = []
+    for r, c in checked:
+        check_lst.append(r)
+        check_lst.append(c)
+        if board[r][c] == 'S':
+            S_count += 1
+            continue
+        Y_count += 1
+    check_lst = tuple(check_lst)
+    if S_count >= 4:
+        position_visited.add(check_lst)
+    return
+
+board = []
+for _ in range(5):
+    board.append(list(input()))
+
+
+visited = [[0 for _ in range(5)]for _ in range(5)]
+position = []
+position_visited = set()
+
+find_position(0)
+print(len(position_visited))
