@@ -1,0 +1,68 @@
+def find_position(depth, y_count, s_count):
+    global visited
+    global position
+
+    if y_count >= 4:
+        return
+
+    if depth == 7:
+        check_position()
+        return
+
+    for r, c in position:
+        for dx, dy in ((0, 1), (1, 0), (0, -1), (-1, 0)):
+            ni, nj = r + dx, c + dy
+            if ni < 0 or ni == 5 or nj < 0 or nj == 5:
+                continue
+            if visited[ni][nj] == 1:
+                continue
+            visited[ni][nj] = 1
+            position.append((ni, nj))
+            n_y_count = y_count
+            n_s_count = s_count
+            if board[ni][nj] == 'Y':
+                n_y_count += 1
+            if board[ni][nj] == 'S':
+                n_s_count += 1
+            find_position(depth + 1, n_y_count, n_s_count)
+            visited[ni][nj] = 0
+            position.pop()
+
+
+def check_position():
+    global position_visited
+    check_lst = []
+    for i in range(5):
+        for j in range(5):
+            if visited[i][j] == 1:
+                check_lst += [i, j]
+
+    check_lst = tuple(check_lst)
+    position_visited.add(check_lst)
+    return
+
+board = []
+for _ in range(5):
+    board.append(list(input()))
+
+
+visited = [[0 for _ in range(5)]for _ in range(5)]
+position = []
+position_visited = set()
+
+for i in range(5):
+    for j in range(5):
+        position.append((i, j))
+        visited[i][j] = 1
+        s_count = 0
+        y_count = 0
+        if board[i][j] == 'Y':
+            y_count += 1
+        if board[i][j] == 'S':
+            s_count += 1
+        find_position(1, y_count, s_count)
+        visited[i][j] = 0
+        position.pop()
+
+
+print(len(position_visited))
