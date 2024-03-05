@@ -1,0 +1,75 @@
+from collections import deque
+
+
+def bfs(si, sj):
+    check_visited = [[0 for _ in range(5)]for _ in range(5)]
+    queue = deque()
+
+    check_visited[si][sj] = 1
+    queue.append((si, sj))
+    cnt = 1
+
+    while queue:
+        r, c = queue.popleft()
+
+        for dx, dy in ((0, 1), (1, 0), (0, -1), (-1, 0)):
+            nr, nc = r + dx, c + dy
+
+            if nr < 0 or nr == 5 or nc < 0 or nc == 5:
+                continue
+
+            if check_visited[nr][nc] == 1:
+                continue
+
+            if visited[nr][nc] == 1:
+                cnt += 1
+                check_visited[nr][nc] = 1
+                queue.append((nr, nc))
+
+    if cnt == 7:
+        return True
+    return False
+
+def check():
+    for i in range(5):
+        for j in range(5):
+            if visited[i][j] == 1:
+                return bfs(i, j)
+
+def dfs(idx, depth, cnt):
+    global visited
+    global answer
+
+    if cnt >= 4:
+        return
+
+    if depth == 7:
+        # for row in visited:
+        #     print(row)
+        # print()
+        if check():
+            answer += 1
+        return
+
+    for i in range(idx, 25):
+        if visited[i // 5][i % 5] == 1:
+            continue
+        visited[i // 5][i % 5] = 1
+        n_cnt = cnt
+        if board[i // 5][i % 5] == 'Y':
+            n_cnt += 1
+
+        dfs(i, depth + 1, n_cnt)
+
+        visited[i // 5][i % 5] = 0
+
+
+board = []
+for _ in range(5):
+    board.append(list(input()))
+
+visited = [[0 for _  in range(5)]for _ in range(5)]
+answer = 0
+dfs(0, 0, 0)
+
+print(answer)
