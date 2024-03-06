@@ -1,0 +1,94 @@
+"""
+<디버깅 포인트>
+1. 항상 그렇든 구상 단위별로 print해보며 진행했습니다.
+중간중간 조합이 맞게 구해졌는지 좌표를 맞게 넣었는지 확인했습니다.
+
+<풀이 과정>
+*1차 제출(정답, 28분 소요)
+1. 여러 사람의 코드를 보았던 점이 도움이 됐던 문제였습니다. 또한 지난 번 풀이에 비해 코드가 발전한 것을 느꼈습니다.
+주말 스터디에서 '아 맞다, 우산'문제의 풀이 과정과 비슷하게 구상을 냈습니다.
+1) 아 맞다, 우산에서는 조합을 찾은뒤 거리를 찾는 과정을 BFS를 통해 진행했습니다.
+2) 위 문제는 시간 복잡도가 충분했기 때문에 별 탈 없이 진행할 수 있었습니다.
+3) 그럼에도 코드 리뷰를 하며 bfs 대신 맨하탄 거리를 사용했던 재성님의 코드를 공부했습니다.
+
+이번 풀이를 구상할 때도 처음에는 거리 구하는 과정을 BFS로 진행하는 방식을 먼저 떠올렸습니다. 하지만 시간 복잡도를 계산해
+보니 bfs로 거리를 구할 수 없다는 것을 알게됐고 다른 풀이 방식을 찾게됐습니다. 좌표값을 미리 찾아두고 거리를 구한다면
+최대 O(N*M)의 거리 구하는 과정을 O(2)로 줄일 수 있었고 이를 토대로 구상한 뒤 코드를 짰습니다. 타인의 코드를 보며 공부한 것이
+다양한 아이디어를 떠오르는데 도움이 된다는 것을 느꼈습니다.  
+
+
+<기억할만 한 점>
+1. 거리 구할 때 무조건 bfs 아니다 좌표값 알면 이를 활용하는 것이 훨씬 빠르다.
+-> 요새 자주 느낀다. 값을 기억해서 활용하는 것이 더 빠르다는 것을
+"""
+
+
+# [2] 전체 병원에서M개의 조합을 구한다
+def find_hospital(idx, depth):
+    global visited
+    global hospital
+    global answer
+
+    #1. 종료조건
+    if depth == M:
+        total_distance = find_distance()
+        answer = min(answer, total_distance)
+        return
+
+    #2. 다음 방문
+    for hopital_idx in range(idx, hospital_cnt):
+        #1) 방문 체크
+        if visited[hopital_idx] == 1:
+            continue
+        #2) 방문 표시
+        visited[hopital_idx] = 1
+        #3) 방문할 병원 리스트에 포함
+        hospital.append(hospital_info[hopital_idx])
+        #4) 재귀 호출
+        find_hospital(hopital_idx, depth + 1)
+        #5) 방문 해제 및 방문할 병원 리스트에서 제거
+        visited[hopital_idx] = 0
+        hospital.pop()
+
+#[3] 사람이 갈 수 있는 최소 거리의 병원을 찾아 모두 더한 후 반환
+def find_distance():
+    total_distance = 0
+    for pr, pc in people:
+        distance = 100
+        for hr, hc in hospital:
+            distance = min(distance, abs(pr - hr) + abs(pc - hc))
+        total_distance += distance
+
+    return total_distance
+
+
+
+#N : 격자의 크기
+# M : M개의 병원을 남겼을 때 병원 거리 총 합 중 최솟값
+N, M = map(int, input().split())
+# 0 : 빈 칸 , 1: 사람, 2: 병원
+board = []
+for _ in range(N):
+    board.append(list(map(int, input().split())))
+
+#[1] 병원과 사람의 좌표값을 구한다
+hospital_cnt = 0
+hospital_info = {}
+people = []
+for i in range(N):
+    for j in range(N):
+        if board[i][j] == 1:
+            people.append((i, j))
+            continue
+
+        if board[i][j] == 2:
+            hospital_info[hospital_cnt] = (i, j)
+            hospital_cnt += 1
+
+#[2] 총병원에서 M개의 병원 고름
+visited = [0 for _ in range(hospital_cnt)]
+answer = 10000#바꿔야함
+hospital = []
+find_hospital(0, 0)
+
+print(answer)
