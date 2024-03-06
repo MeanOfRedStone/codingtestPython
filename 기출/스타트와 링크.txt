@@ -1,0 +1,85 @@
+"""
+<풀이 과정>
+* 총 28분 : 구상(10분) + 구현(18분, 1차 제출 정답)
+1. 구상(10분)
+처음 board에 적인 숫자와 기호를 보고 DP류의 문제라고 생각해 놀랐습니다.
+하지만 자세히 읽어보니 완전탐색을 통해 조합을 구하고 약간의 로직을 구현하는 문제였습니다.
+풀어본 문제인데도 당황한 점을 반성해야하겠지만 금방 자세히 읽어본 뒤 쉬운 문제임을 알아채고
+먼저 풀이를 진행했습니다.
+
+2. 구현(18분)
+오늘 구현 시간은 예제를 잘 못읽어 print해보느라 생각보다 길어졌습니다. 다만 중간중간 실수없이
+진행하기 위해 오래걸린 것이고 총 시간도 짧으니 이정도는 충분히 감안할만하다고 생각합니다.
+
+
+<디버깅 포인트>
+1. 중간중간 로직 단위별로 확인하며 진행했습니다.
+예제를 잘못 읽어 맞게 짠 로직도 두 세번 확인하느라 시간이 생각보다 늘어졌습니다.
+다만 실수를 줄이기 위한 것이니 감안할만하다고 생각합니다.
+
+<기억할만한 점>
+1. 쫄지 말자
+2. 쫄았어도 정신 빨리 차린 건 잘했다
+"""
+
+
+def find_work(idx, depth):
+    global visited
+
+    if depth == N // 2:
+        check_differecne()
+
+        return
+
+    for i in range(idx, N + 1):
+        #1. 방문 체크
+        if visited[i] == 1:
+            continue
+
+        #2. 방문 표시
+        visited[i] = 1
+
+        #3. 다음 방문
+        find_work(i, depth + 1)
+
+        #4. 방문 해제
+        visited[i] = 0
+
+
+def check_differecne():
+    global answer
+
+    #아침에 할 일과 저녁에 할 일을 구해준다
+    morning_work = []
+    evening_work = []
+
+    for i in range(1, N + 1):
+        if visited[i] == 1:
+            morning_work.append(i)
+            continue
+        evening_work.append(i)
+
+    morning_intensity = 0
+    for i in range(N // 2 - 1):
+        for j in range(i + 1, N // 2):
+            morning_intensity += (board[morning_work[i]][morning_work[j]] + board[morning_work[j]][morning_work[i]])
+
+
+    evening_intensity = 0
+    for i in range(N // 2 - 1):
+        for j in range(i + 1, N // 2):
+            evening_intensity += (board[evening_work[i]][evening_work[j]] + board[evening_work[j]][evening_work[i]])
+
+    answer = min(answer, abs(morning_intensity - evening_intensity))
+
+
+N = int(input())
+board = [[0 for _ in range(N + 1)]]
+for _ in range(N):
+    board.append([0] + list(map(int, input().split())))
+
+answer = 2000
+visited = [0 for _ in range(N + 1)]
+find_work(1, 0)
+
+print(answer)
