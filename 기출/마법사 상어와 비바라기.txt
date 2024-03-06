@@ -1,0 +1,105 @@
+"""
+<풀이 과정>
+*총 풀이 시간 1시간 33분
+1. 구상
+5:01 ~ 5:19(19분)
+저번에 비슷한 문제를 풀어 부담 없이 쉽게 구상후 수도 코드를 작성할 수 있었습니다.
+
+2. 구현
+5:19 ~ 5:30(11분)
+수도코드를 촘촘히 짠 뒤 구현했기 때문에 구현은 잘못된 곳이 없는지 확인 하면서 진행했습니다.
+
+3. 디버깅 및 제출
+5:30 ~ 5:34(4분)
+첫 테스트 케이스대로 답이 나오지 않아 코드를 다시 읽었습니다. 다음 방문할 인덱스를 넣어주지 않고
+기존 리스트를 넣어준 것이 문제였습니다.
+
+*총평
+1번 문제를  못 푼뒤 1시간 정도는 2번 문제에 할당해야겠다고 생각했습니다.
+하지만 예상보다 20분 적은 40분만 2번 문제에 사용했습니다. 화장실 갔다온 뒤 마음을 비우고
+1번 문제를 애매하게 디버깅하기보다는 2번 문제를 풀기 시작했습니다.
+
+1번 문제를 못 푼뒤 짧은 시간 동안 풀이했지만 더 신중하게 풀며 2번 문제는 꼭 맞추겠다는 마음으로
+더욱 신중하게 접근했습니다. 급하게 문제를 풀고싶은 생각이 가득했지만 오히려 템포를 늦추며
+천천히 신중하게 접근했습니다.
+
+<디버깅 포인트>
+1. nr, nc 넣어야 할 곳에 r, c 를 넣어 첫  테스트 케이스를 통과하지 못했습니다.
+자주 썼던 큐 문제였기 때문에 금방 오탈자를 찾아(4분) 시간 내 제출에 성공할 수 있었습니다.
+
+<기억할만한 점>
+1. 당황할수록 천천히 문제를 푸는 것이 좋다
+"""
+
+
+direction = [(-5, -5), (0, -1),(-1, -1), (-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1)]
+def magic():
+    global board
+
+    #[1] 첫 구름
+    cloud = []
+    cloud.append((N - 1, 0))
+    cloud.append((N - 1, 1))
+    cloud.append((N - 2, 0))
+    cloud.append((N - 2, 1))
+
+    #[2] M번만큼 이동
+    for idx in range(M):
+        di, si = move_lst[idx]
+        dx, dy = direction[di]
+        visited = []
+
+        #[3] 모든 구름의 이동 및 사라짐
+        while cloud:
+            r, c = cloud.pop()
+            nr, nc = (r + dx * si) % N, (c + dy * si) % N
+            board[nr][nc] += 1
+            visited.append((nr, nc))
+        # print(visited)
+        # exit()
+        #[4] 구름이 사라진 곳 물 복사
+        for i in range(len(visited)):
+            r, c = visited[i]
+
+            water_cnt = 0
+
+            for i in range(0, len(direction) + 1, 2):
+                if i == 0:
+                    continue
+                dx, dy = direction[i]
+                nr, nc = r + dx, c + dy
+
+                if nr < 0 or nr == N or nc < 0 or nc == N:
+                    continue
+
+                if board[nr][nc] >= 1:
+                    water_cnt += 1
+
+            board[r][c] += water_cnt
+
+        #[5] 비구름의 재생산
+        for i in range(N):
+            for j in range(N):
+                if (i, j) in visited:
+                    continue
+                if board[i][j] >= 2:
+                    cloud.append((i, j))
+                    board[i][j] -= 2
+
+
+N, M = map(int, input().split())
+
+board = []
+for _ in range(N):
+    board.append(list(map(int, input().split())))
+
+move_lst = []
+for _ in range(M):
+    move_lst.append(tuple(map(int, input().split())))
+
+magic()
+
+total_water = 0
+for row in board:
+    total_water += sum(row)
+print(total_water)
