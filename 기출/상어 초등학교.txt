@@ -1,0 +1,111 @@
+"""
+<풀이 과정>
+*시간 내에 제출 실패했습니다- 1시간 55분(3:00 ~ 4:55)
+*저녁 식사 시간에 불필요한 로직을 삭제하니 정답이었습니다.
+*실패 전 제출 총 6회
+구상 - 30분(3:30)
+구현 - 30(4:00)
+디버깅 - 16(4:16)
+<제출>
+1회 - 1시간 16분(4:16)
+2회 - 3분 (4:19)
+3회 - 6분(4:25)
+4회 - 7분(4:32)
+5회 - 7분(4:39)
+6회 - (4:55)
+
+문제 풀이 시간이 지나치게 길어지면 새롭게 풀어야 한다는 것을 깨닫게 된 문제였습니다.
+오늘은 구상이 맞다고 생각해 새롭게 풀지 못하고 계속해서 디버깅할 부문을 찾느라 실패했습니다.
+하지만 구상이 맞더라도 과감하게 새롭게 시작하는 태도가 필요할 것 같습니다.
+
+<디버깅 포인트>
+1. 불필요한 로직은 쓰지 말자
+
+
+<기억할만 한 점>
+1. 풀이 시간 1시간을 지나치게 초과하면 새롭게 풀자
+2.로직 중복되는 부분은 없애자
+"""
+
+
+#<1. 자리 선정>
+def find_position(position_hope):
+    global visited
+    global students_check
+    global happiness
+
+    idx, hope1, hope2, hope3, hope4 = position_hope
+    hope_students = [hope1, hope2, hope3, hope4]
+
+    #[1] 비어있는 칸 중에 가장 좋아하는 학생이 많은 곳으로
+    position = []
+    for i in range(N):
+        for j in range(N):
+            hope = 0
+            vacant = 0
+            #1) 이미 착석한 곳이라면 넘어감
+            if visited[i][j] != -1:
+                continue
+            #2) 인접한 자리의 좋아하는 학생 수 확인, 빈 자리수 확인
+            for dx, dy in ((0, 1), (1, 0), (0, -1), (-1, 0)):
+                ni, nj = i + dx, j + dy
+                #(1) 레인지 확인
+                if ni < 0 or ni == N or nj < 0 or nj == N:
+                    continue
+                #(2) 비어있는 곳이라면 vacant 증가 후 넘어감
+                if visited[ni][nj] == -1:
+                    vacant += 1
+                    continue
+                #(3) 좋아하는 학생이 앉았따면 hope 증가
+                student_no = visited[ni][nj]
+                if student_no in hope_students:
+                    hope += 1
+            #4) 가능한 후보를 넣어둔다
+            position.append((hope, vacant, N - i, N - j))
+
+    #5) 좋아하는 학생이 많은 순, 빈 곳이 많은 순, 행이 작은 순, 열이 작은 순으로 정렬
+    position.sort(key = lambda x : (x[0], x[1], x[2], x[3]), reverse= True)
+    gi, gj = N - position[0][2], N - position[0][3]
+    visited[gi][gj] = idx
+    students_check[idx] = 1
+    return
+
+
+def find_happiness():
+    total_happiness = 0
+
+    happiness_point = [0, 1, 10, 100, 1000]
+
+    for i in range(N):
+        for j in range(N):
+            student_no = visited[i][j]
+
+            hope = 0
+            for paper in hope_lst:
+                idx = paper[0]
+                hope_student = paper[1:]
+                if student_no == idx:
+                    for dx, dy in ((0, 1), (1, 0), (0, -1), (-1, 0)):
+                        ni, nj = i + dx, j + dy
+                        if ni < 0 or ni == N or nj < 0 or nj == N:
+                            continue
+                        seat_student = visited[ni][nj]
+                        if seat_student in hope_student:
+                            hope += 1
+            total_happiness += happiness_point[hope]
+
+    return total_happiness
+
+N = int(input())
+
+visited = [[-1 for _ in range(N)]for _ in range(N)]
+students_check = [0 for _ in range(N*N + 1)]
+hope_lst = []
+
+for _ in range(N * N):
+    idx, hope1, hope2, hope3, hope4 = map(int, input().split())
+    find_position((idx, hope1, hope2, hope3, hope4))
+    hope_lst.append([idx, hope1, hope2, hope3, hope4])
+
+answer = find_happiness()
+print(answer)
