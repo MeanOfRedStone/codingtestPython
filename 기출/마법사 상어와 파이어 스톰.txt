@@ -1,0 +1,149 @@
+import sys
+sys.stdin = open("in.txt", "r")
+
+
+"""
+<풀이 과정>
+*총 풀이 시간 89분(구상 10분), 구현(79분)
+1. 마법사 상어와 파이어스톰은 구현 자체가 까다로운 문제라 그런지 구상할 아이디어는 많지 않았습니다.
+첫 로직은 분할 정복의 방식으로 회전하는 것이었습니다. 다음으로는 동시에 얼음의 녹이는 것입니다.
+녹을 위치를 모두 찾은 뒤 마지막에 한 번에 녹여주었습니다.
+위의 두 아이디어 모두 개별로 문제에서 풀어보았던 것이었습니다. 이 외에 복잡한 규칙은 존재하지 않았기 때문에
+구현에 들어갔습니다.
+
+2. 구현은 반대로 매우 까다로웠습니다. 첫 번째로 구상한 분할 정복과 회전이 동시에 일어나는 부분이 바로 그것입니다.
+회전과 분할 정복은 파이썬의 기능을 잘 활용하지 못하는 제게 특히 많은 시간이 필요했습니다.
+이전에도 해당 부분을 더 잘 하기 위해 파이썬 기능을 활용해 리팩토링을 하였지만 아직 손에 익지 않아 오늘도 복잡하게 구현했습니다.
+
+하나하나 예시를 만들어가며 지우고 구현하고 지우고 구현하고 계속 반복했습니다. 다행인 것은 이전에 어려운 방식, 파이썬 활용 방식
+모두 사용해 보았기 때문에 만들 줄은 알았다는 것입니다. 이 과정에서 시간 복잡도의 계산이 생각한 것보다 훨씬 길어졌는데 다행히 
+잘 통과하였습니다.
+
+
+파이썬 문법을 더 잘 숙지해 회전과 분할정복 풀이 실력을 향상하지 않는다면 이는 추후에 난관으로 다가올 것이라고 예상합니다.
+관련된 문제를 더 찾아 풀어보도록 하겠습니다.
+
+또한 시간 복잡도 계산을 조금 더 잘 할 수 있도록 연습해서 구상 때 실수하지 않도록 해야할 것입니다.
+
+<기록할만 한 점>
+1. 분할 정복, 회전 -> 파이썬 기능 활용하는 문제 더 풀어보자
+2. 시간 복잡도 계산 내 생각보다 적다 -> 더 자세하게 할 수 있도록 연습해보자
+ 
+"""
+
+def magic(stage):
+    global board
+    board_range = 2 ** N
+    m_range = (2 ** N) // (2 ** stage)
+    stage_range = (2 ** stage)
+
+    #[1] 부분마다 회전
+    for i in range(m_range):
+        for j in range(m_range):
+            row_start, row_end = i * (stage_range), i * (stage_range) + stage_range
+            col_start, col_end = j * (stage_range), j * (stage_range) + stage_range
+            rotation_ball(row_start, col_start, row_end, col_end)
+
+    #[2] 얼음 탐색
+    melting = []
+    for i in range(board_range):
+        for j in range(board_range):
+            #1. 얼음이 없는 경우 넘어감
+            if board[i][j] == 0:
+                continue
+            ice_cnt = 0
+            #1-2. 얼음이 있는 경우 4방향 탐색
+            for dx, dy in ((0, 1), (1, 0), (-1, 0), (0, -1)):
+                ni, nj = i + dx, j + dy
+                #1) 레인지 체크
+                if ni < 0 or ni == board_range or nj < 0 or nj == board_range:
+                    continue
+                if board[ni][nj] > 0:
+                    ice_cnt += 1
+
+            #2) 얼음이 잇는 곳이 3칸 미만이면 녹을 곳 확정
+            if ice_cnt < 3:
+                melting.append((i, j))
+
+    #[3] 녹을 곳의 얼음 -1 감소
+    for i, j in melting:
+        board[i][j] -= 1
+
+
+def rotation_ball(rs, cs, re, ce):
+    global board
+
+    temp = []
+    for i in range(rs, re):
+        temp_row = []
+        for j in range(cs, ce):
+            temp_row.append(board[i][j])
+        temp.append(temp_row)
+    temp_range = len(temp)
+
+    rot_lst = []
+    for i in range(temp_range):
+        rot_row = []
+        for j in range(temp_range):
+            rot_row.append(temp[temp_range - j - 1][i])
+        rot_lst.append(rot_row)
+
+    for i in range(rs, re):
+        for j in range(cs, ce):
+            board[i][j] = rot_lst[i - rs][j - cs]
+
+from collections import deque
+
+
+def bfs(si, sj):
+    global visited
+    global ice_volume
+
+    queue = deque()
+
+    visited[si][sj] = 1
+    cnt = 1
+    queue.append((si, sj))
+
+    while queue:
+        r, c = queue.popleft()
+
+        for dx, dy in ((0, 1), (1, 0), (0, -1), (-1, 0)):
+            nr, nc = r + dx, c + dy
+
+            if nr < 0 or nr == 2 ** N or nc < 0 or nc == 2 ** N:
+                continue
+            if visited[nr][nc] == 1:
+                continue
+            if board[nr][nc] == 0:
+                continue
+
+            cnt += 1
+            visited[nr][nc] = 1
+            queue.append((nr, nc))
+
+    ice_volume = max(ice_volume, cnt)
+
+N, Q = map(int, input().split())
+
+board = []
+for _ in range(2 ** N):
+    board.append(list(map(int, input().split())))
+
+spells = list(map(int, input().split()))
+for stage in spells:
+    magic(stage)
+
+total_ice = 0
+for row in board:
+    total_ice += sum(row)
+
+ice_volume = 0
+visited = [[0 for _ in range(2 ** N)]for _ in range(2**N)]
+for i in range(2 ** N):
+    for j in range(2 ** N):
+        if board[i][j] > 0 and visited[i][j] == 0:
+            bfs(i, j)
+
+print(total_ice)
+print(ice_volume)
