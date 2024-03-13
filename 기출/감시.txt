@@ -1,0 +1,111 @@
+import sys
+sys.stdin = open("in.txt", "r")
+"""
+<풀이 과정>
+*총 풀이 시간 77분(구상(38분), 구현(29분), 디버깅(10분)
+1. 오늘은 구상 과정에 많은 시간을 쏟았습니다. 조건을 확정하지 못했기 때문입니다.
+체스 말이라는 생각때문에 이동 범위가 한 칸인지 제약 조건 만날때까인지 확정하지 못해 많은 시간을
+쏟았습니다. 테스트 케이스를 살펴보았고 테스트 케이스에 해당 규칙이 나왔음에도 빨리 조건을
+확정하지 못했습니다. 하지만 문제 조건에서 주어지지 않은 부분을 테스트 케이스에서 정확히 확인하고
+넘어간 것은 잘 한점이라고 생각합니다.
+
+2. 구현 과정에서는 룩업 테이블을 신중하게 짜기 위해 노려했습니다. 하지만 룩업 테이블은 틀리기 너무
+쉽기 때문에 이런 상황에서 어떻게 할지 대처 전략을 세워야할 것입니다. 시간과 디버깅의 용이성 중
+어느 것이 좋을 지 계산하고 활용하는 전략을 세우겠습니다.
+
+3. 오늘은 이차원 배열을 .copy()하면 배열이 복사되지 않는 다는 것을 제대로 알지 못해 값이 달라졌습니다.
+하지만 .copy()가 확실하지 않다고 생각했기 때문에 print하여 문제점을 발견할 수 있었고 적절히 대응
+할 수 있었습니다. 이차원 배열으 딥카피는 최대한 사용하지 않아야겠지만 만약을 대비해 사용방법을 배
+워야 할 것이라고 생각합니다.
+
+<기억할만 한 점>
+1. 룩업 테이블 전략 필요하다 - 시간 vs 디버깅 용이성
+2. 이차원 배열 딥카비 알아놓자
+"""
+
+def find_pieces_combination(depth):
+    global direction
+
+    #[1] 종료 조건 : 모든 말의 방향 조합을 찾으면 못 가는 빈칸의 거리를 계산
+    if depth == pieces_cnt:
+        #1. 빈 칸 거리 계산
+        find_vacant()
+        return
+    #[2] 재귀 방문 : 방향 조합을 찾아주고 다음 차례로 넘어감
+    for i in range(4):
+        direction.append(i)
+        find_pieces_combination(depth + 1)
+        direction.pop()
+
+
+move_info = {1 : [[(0, 1)], [(1, 0)], [(0, -1)], [(-1, 0)]],
+             2 : [[(0, 1), (0, -1)], [(1, 0), (-1, 0)], [(0, 1), (0, -1)], [(1, 0), (-1, 0)]],
+             3: [[(-1, 0), (0, 1)], [(0, 1), (1, 0)], [(1, 0), (0, -1)], [(0, -1), (-1, 0)]],
+             4: [[(0, -1), (-1, 0), (0, 1)], [(-1, 0), (0, 1), (1, 0)], [(0, 1), (1, 0), (0, -1)], [(1, 0), (0, -1), (-1, 0)]],
+             5: [[(1, 0), (0, -1), (-1, 0), (0, 1)], [(1, 0), (0, -1), (-1, 0), (0, 1)], [(1, 0), (0, -1), (-1, 0), (0, 1)], [(1, 0), (0, -1), (-1, 0), (0, 1)]]}
+
+def find_vacant():
+    global answer
+
+    vacant_visited = [[0 for _ in range(M)]for _ in range(N)]
+
+    for idx in range(pieces_cnt):
+        #1. 말 정보 확인
+        r, c, piece_no = pieces[idx]
+
+        #2. 이동 정보 확인
+        move_idx = direction[idx]
+        movement = move_info[piece_no][move_idx]
+
+        #3. 이동
+        for dx, dy in movement:
+            nr, nc = r, c
+            #1) 제약 조건 만날 때까지 이동
+            while True:
+                #(1) 이동
+                nr += dx
+                nc += dy
+                #(2) 레인지 벗어나면 종료
+                if nr < 0 or nr == N or nc < 0 or nc == M:
+                    break
+                #(3) 상대방 말 있는면 종료
+                if board[nr][nc] == 6:
+                    break
+                #(4) temp_vacant 0으로 바꿔줌
+                if board[nr][nc] == 0 and vacant_visited[nr][nc] == 0:
+                    vacant_visited[nr][nc] = 1
+
+    visit_vacant = 0
+    for row in vacant_visited:
+        visit_vacant += sum(row)
+
+    left_vacant = total_vacant - visit_vacant
+    answer = min(answer, left_vacant)
+
+
+N, M = map(int, input().split())
+board = []
+for _ in range(N):
+    board.append(list(map(int, input().split())))
+
+#[1] 빈 칸 계산할 리스트
+vacant = [[0 for _ in range(M)]for _ in range(N)]
+#[2] 말의 위치와 종류 보관할 리스트
+pieces = []
+#[3] 빈 칸 및 말의 위치와 종류 계산
+for i in range(N):
+    for j in range(M):
+        if board[i][j] == 0:
+            vacant[i][j] = 1
+        if 1 <= board[i][j] <= 5:
+            pieces.append((i, j, board[i][j]))
+total_vacant = 0
+for row in vacant:
+    total_vacant += sum(row)
+#[4]말의 수만큼 방향 조합 찾고 비어있는데 못가는 칸의 최솟값을 갱신한다
+pieces_cnt = len(pieces)
+direction = []
+answer = N * M
+find_pieces_combination(0)
+
+print(answer)
