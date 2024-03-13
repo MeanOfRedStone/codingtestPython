@@ -1,0 +1,110 @@
+from collections import deque
+
+direction = [(-1, 0), (0, 1), (1, 0), (0, -1)]
+
+def expand_dirt():
+    global board
+
+    queue = deque()
+    for i in range(R):
+        for j in range(C):
+            #1. 미세먼지가 있는 경우만 확산이 일어난다
+            if board[i][j] > 0:
+                queue.append((i, j, board[i][j]))
+    #2. 확산은 동시에 일어나기 때문에 큐에서 작동한다
+    while queue:
+        i, j, dirt = queue.popleft()
+        expand_cnt = 0
+        dirt_volume = dirt // 5
+        for dx, dy in direction:
+            ni, nj = i + dx, j + dy
+            # 1) 인덱스 레인지 체크
+            if ni < 0 or ni == R or nj < 0 or nj == C:
+                continue
+            # 2) 공기 청정기 있는 경우 체크
+            if board[ni][nj] == -1:
+                continue
+            # 3) 제약조건을 넘겼다면 확산
+            board[ni][nj] += dirt_volume
+            expand_cnt += 1
+        # 4) 현재 위치 미세먼지 감소
+        board[i][j] -= (dirt_volume * expand_cnt)
+
+
+def air():
+    global board
+
+    #[1] 위쪽 순환
+    #1. 초기 설정
+    d_idx = 0
+    rotation_cnt = 1
+    ur, uc = upper - 1, 0
+    #2. 4방향을 탐색한다
+    while rotation_cnt <= 4:
+        #1) 먼지가 있는 곳의 좌표
+        dx, dy = direction[d_idx]
+        n_ur, n_uc = ur + dx, uc + dy
+        #2) 레인지 넘어가면 회전
+        if n_ur < 0 or n_ur == upper + 1 or n_uc < 0 or n_uc == C:
+            d_idx = (d_idx + 1) % 4
+            rotation_cnt += 1
+            continue
+        #3) 공기 청정기 만나면 종료
+        if board[n_ur][n_uc] == -1:
+            board[ur][uc] = 0
+            break
+        #4) 먼지를 현재 위치로 가져온다
+        board[ur][uc] = board[n_ur][n_uc]
+        #5) 위치 갱신
+        ur, uc = n_ur, n_uc
+
+    #[2] 아래쪽 공기 순환
+    #1. 초기 설정
+    d_idx = 2
+    lr, lc = lower + 1, 0
+    rotation_cnt = 1
+    #2. 4방향을 탐색
+    while rotation_cnt <= 4:
+        # 1) 먼지가 있는 곳의 좌표
+        dx, dy = direction[d_idx]
+        n_lr, n_lc = lr + dx, lc + dy
+        # 2) 레인지 넘어가면 회전
+        if n_lr == lower - 1 or n_lr == R or n_lc < 0 or n_lc == C:
+            d_idx = (d_idx - 1) % 4
+            rotation_cnt += 1
+            continue
+        # 3) 공기 청정기 만나면 종료
+        if board[n_lr][n_lc] == -1:
+            board[lr][lc] = 0
+            break
+        # 4) 먼지를 현재 위치로 가져온다
+        board[lr][lc] = board[n_lr][n_lc]
+        # 5) 위치 갱신
+        lr, lc = n_lr, n_lc
+
+
+R, C, T = map(int, input().split())
+
+board = []
+# -1 : 공기 청정기 || 나머지는 미세먼지의 양
+for _ in range(R):
+    board.append(list(map(int, input().split())))
+
+upper = -1
+for i in range(R):
+    if board[i][0] == -1:
+        upper = i
+        break
+lower = upper + 1
+
+for _ in range(T):
+    expand_dirt()
+    air()
+
+answer = 0
+for i in range(R):
+    for j in range(C):
+        if board[i][j] > 0:
+            answer += board[i][j]
+
+print(answer)
