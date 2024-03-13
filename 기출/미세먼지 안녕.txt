@@ -1,0 +1,152 @@
+import sys
+sys.stdin = open("in.txt", "r")
+
+"""
+<풀이 과정>
+* 총 풀이 시간 64분(구상 : 34분 구현 : 30분)
+오늘은 구상 후 구현 과정에서 구상을 약간 수정 한 뒤 완성해서 제출했습니다.
+지난 이틀동안 문제를 제 시간 안에 풀지 못했기 때문에 오늘은 시간이 오래걸리더라도
+신중하게 구상과 구현을 진행했습니다.
+1. 구상 (34분)
+오늘 구상은 크게 미세먼지의 확산, 공기청정기의 작동 부분, 시간복잡도 계산으로 나누어 진행했습니다.
+
+1)먼저 미세먼지의 확산 부분입니다.
+결과적으로 해당 부분의 구상에서 문제의 조건을 제대로 파악하지 못했습니다.
+다만 빨리 알아차릴 수 있는 부분이었기 때문에 구현 중간에 확인하며 변경할 수 있었습니다.
+잘못 생각한 부분은 먼지의 확장은 한 번에 일어난다는 점이었습니다.
+
+처음에는 for루프로 순환하며 먼지를 증가하는 방안을 생각했습니다. 하지만 이렇게 되는경우
+윗부분에서 먼지가 증가하며 내려오기때문에 밑에 부분에서는 먼지가 추가된 채로 확장이 일어납니다.
+조건에서 동시에 일어난다고 한 점을 잘 파악하지 못했습니다. 오늘은 쉽게 넘어갔지만
+이 부분을 유념해야겠습니다.
+
+2) 공기청정기의 작동
+공기청정기의 작동에서 공기 청정기의 대수가 명시되지 않았기 때문에 처음에는 공기청정기가 여러대
+있는 경우까지 모두 생각해봤습니다. 하지만 문제에서 말하는 순환이 일어나기 위해서는 공기 청정기
+가 한 대만 있어야 한다는 결론을 내렸습니다.
+
+이 후 회전은 파이썬의 기능을 활용하며 수월하게 구상할 수 있었습니다.
+
+2. 구현(35분)
+오늘은 구현 단계에서 중간중간 확인해 보니 먼지의 확산 부분 구상이 틀렸다는 것을 알 수 있었습니다.
+테스트 케이스가 많고 자세했기 때문에 구상이 잘못됐다는 것을 금방 파악할 수 있었습니다.
+또한 동시에 증가된다는 특성을 보고 큐를 사용하자는 생각을 했습니다.
+
+큐를 사용한 뒤에도 로직은 완성되지 않았습니다. 왜냐하면 배열에 있는 먼지의 값만 활용했기 때문입니다.
+따라서 어제 재성 프로님과 얘기하는 큐를 다양하게 활용하라는 얘기가 떠올라 먼지의 양까지 큐에서 미리
+보관한 뒤 초기 값을 가지고 한 번에 먼지의 확장 로직을 구현할 수 있었습니다.
+
+공기청정기 작동은 로직을 꼼꼼하게 짜기만 하면 되는 부분이었기 때문에 수도코드 작성을 꼼꼼히 한 뒤
+그대로 구현했습니다. 그 결과 틀리지 않고 한 번에 맞출 수 있었습니다.
+
+<디버깅 포인트>
+1. 동시에 일어난다.
+큐를 활용하고 해당 값까지 큐가 가지고 있어야 한다.
+
+<기억할만한 점>
+1. 동시성이라는 부분을 잘 정리해놓자
+-> 큐 활용(동시성), 해당 값 큐에 보관(보존성)
+
+
+"""
+
+
+
+from collections import deque
+
+direction = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+
+def expand_dirt():
+    global board
+
+    queue = deque()
+    for i in range(R):
+        for j in range(C):
+            #1. 미세먼지가 있는 경우만 확산이 일어난다
+            if board[i][j] > 0:
+                queue.append((i, j, board[i][j]))
+    #2. 확산은 동시에 일어나기 때문에 큐에서 작동한다
+    while queue:
+        i, j, dirt = queue.popleft()
+        expand_cnt = 0
+        dirt_volume = dirt // 5
+        for dx, dy in direction:
+            ni, nj = i + dx, j + dy
+            # 1) 인덱스 레인지 체크
+            if ni < 0 or ni == R or nj < 0 or nj == C:
+                continue
+            # 2) 공기 청정기 있는 경우 체크
+            if board[ni][nj] == -1:
+                continue
+            # 3) 제약조건을 넘겼다면 확산
+            board[ni][nj] += dirt_volume
+            expand_cnt += 1
+        # 4) 현재 위치 미세먼지 감소
+        board[i][j] -= (dirt_volume * expand_cnt)
+
+
+def air():
+    global board
+
+    #[1] 위쪽 순환
+    #1. 공기청정기 바로 위
+    board[upper - 1][0] = 0
+    #2. 좌측 세로 회전
+    for i in range(upper - 2, -1, -1):
+        board[i + 1][0] = board[i][0]
+    #3. 위측 회전
+    rotation = board[0]
+    rotation = rotation[1:] + [0]
+    board[0] = rotation
+    #4. 우측 세로 회전
+    for i in range(1, upper + 1):
+        board[i - 1][C - 1] = board[i][C - 1]
+    #5. 아래측 회전
+    rotation = board[upper][1:]
+    rotation = [0] + rotation[:-1]
+    board[upper][1:] = rotation
+
+    #[2]아래쪽 순환
+    #1. 공기청정기 바로 아래
+    board[lower + 1][0] = 0
+    #2. 좌측 세로 회전
+    for i in range(lower + 2, R):
+        board[i - 1][0] = board[i][0]
+    #3. 밑 변 회전
+    rotation = board[R-1]
+    rotation = rotation[1:] + [0]
+    board[R-1] = rotation
+    #4. 우측 세로 회전
+    for i in range(R - 2, lower - 1, -1):
+        board[i + 1][C - 1] =board[i][C - 1]
+    #5. 윗 변 회전
+    rotation = board[lower][1:]
+    rotation = [0] + rotation[:-1]
+    board[lower][1:] = rotation
+
+
+R, C, T = map(int, input().split())
+
+board = []
+# -1 : 공기 청정기 || 나머지는 미세먼지의 양
+for _ in range(R):
+    board.append(list(map(int, input().split())))
+
+upper = -1
+for i in range(R):
+    if board[i][0] == -1:
+        upper = i
+        break
+lower = upper + 1
+
+for _ in range(T):
+    expand_dirt()
+    air()
+
+answer = 0
+for i in range(R):
+    for j in range(C):
+        if board[i][j] > 0:
+            answer += board[i][j]
+
+print(answer)
