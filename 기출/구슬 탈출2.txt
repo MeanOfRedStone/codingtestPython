@@ -1,0 +1,139 @@
+"""
+<풀이 과정>
+*총 풀이시간 62분 - 구상(대략 40분) 구현(대략 20분)
+오늘은 이전에 풀어본 문제였기 때문에 구상과 에지케이스를 찾는 것은 어렵지 않았습니다.
+하지만 알고있음에도 수도코드로 구상한 것을 꼼꼼하게 작성하는 데는 생각보다 시간이 걸렸습니다.
+
+오늘 구상에서 얘기할 점은 어제 배운 점을 활용했다는 것입니다. answer를 최대 방문 깊이보다 1 큰 11로 설정해 코드를 줄일 수 있다는
+다경님의 리뷰를 참조해 코드를 작성한 점이 첫 번째입니다. 다음으로는 어제 아기 상어를 풀며
+초기 상어 위치를 확인한 후 상어를 제거해 활용한 점을 구슬에도 적용했다는 것입니다. 풀이가 비슷
+한 것은 아니지만 문제에서 사용했던 아이디어와 코드 리뷰에서 배운 점을 활용할 수 있다는 점이 좋
+았습니다.
+
+구현은 구상의 과정을 옮겨 적었습니다. 생각나는 점은 빨간 공과 파란 공의 이동 로직이 중첩되지만 
+저번 리뷰에서 중복된 로직이어도 다시 작성하자라는 기억이 떠올랐고 이를 실행했습니다.
+하지만 이를 하면서 다시 확인했음에도 빼먹은 부분이 생겼습니다. 시간이 급한 것이 아니라면 앞으로도 이러한
+방식을 계속 가져가서 확인하며 진행해야할 것 같습니다.
+
+<기억할만한 점>
+1. 중복된 로직이어도 손으로 다시 적자
+2. answer = 최대 깊이 + 1로 설정하면 가지치기 로직 단순해진다
+3. 이동하는 로직일 때 초기 위치 확인 후 지우는 것도 이동에 도움 된다(경우에 따라 다를 수 있음!)
+"""
+def find_direction_combination(depth):
+    global answer
+    global direction_combination
+
+    #[1] 가지치기
+    if answer <= depth:
+        return
+    #[2] 구슬 이동 확인
+    if 1 <= depth <= 10:
+        is_blue_out, is_red_out = move_ball()
+        if is_red_out:
+            answer = min(answer, depth)
+            return
+        if is_blue_out:
+            return
+    #[3] 다음 이동 확인
+    for i in range(4):
+        direction_combination.append(i)
+        find_direction_combination(depth + 1)
+        direction_combination.pop()
+
+
+def move_ball():
+    ri, rj = sri, srj
+    bi, bj = sbi, sbj
+    #[1] 방향 조합에 따라 현재 각자의 위치에서 움직이고 움직인 후 좌표를 반환받음
+    for d_idx in direction_combination:
+        # print(f"이동 전 : {ri} {rj} {bi} {bj}")
+        ri, rj, bi, bj = move(d_idx, ri, rj, bi, bj)
+        # print(f"이동 후 : {ri} {rj} {bi} {bj}")
+        #1) 파란색 공이 탈출하는 모든 경우에 실패
+        if bi == -2 and bj == -2:
+            return True, False
+        #2) 빨간색 공만 탈출한다면 성공
+        if ri == -1 and rj == -1:
+            return False, True
+    #[2] 마지막까지 탈출 못한다면 실패
+    return False, False
+
+
+direction = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+def move(d_idx, ri ,rj, bi, bj):
+    dx, dy = direction[d_idx]
+    #[1] 빨간 공의 이동
+    nri, nrj = ri, rj
+    while True:
+        #1. 이동
+        nri += dx
+        nrj += dy
+        #2. 장애물 체크
+        if board[nri][nrj] == '#':
+            #1) 장애물을 만난 경우 그 이전에 멈춤
+            nri -= dx
+            nrj -= dy
+            break
+        #3. 구멍 체크
+        if board[nri][nrj] == 'O':
+            nri = -1
+            nrj = -1
+            break
+    #[2] 파란공의 이동
+    nbi, nbj = bi, bj
+    while True:
+        #1. 이동
+        nbi += dx
+        nbj += dy
+        #2. 장애물 체크
+        if board[nbi][nbj] == '#':
+            #1) 장애물을 만난 경우 그 이전에 멈춤
+            nbi -= dx
+            nbj -= dy
+            break
+        #3. 구멍 체크
+        if board[nbi][nbj] == 'O':
+            nbi = -2
+            nbj = -2
+            break
+    #[3] 같은 위치로 이동한 경우
+    if nri == nbi and nrj == nbj:
+        #1. 이동 거리 판별
+        r_dist = abs(ri - nri) + abs(rj - nrj)
+        b_dist = abs(bi - nbi) + abs(bj - nbj)
+        #2. 이동 거리가 큰 경우 현 위치 뒤에 위치
+        if r_dist > b_dist:
+            nri -= dx
+            nrj -= dy
+        if r_dist < b_dist:
+            nbi -= dx
+            nbj -= dy
+    #[4] 위치 반환
+    return nri, nrj, nbi, nbj
+
+# N : 행 | M : 열
+N, M = map(int, input().split())
+# # : 벽 | . : 빈 칸 | B : 파랑 | R : 빨강 | O : 출구
+board = []
+for _ in range(N):
+    board.append(list(input()))
+
+#[1] 각 구슬의 위치를 찾고 구슬 위치를 빈칸으로 비워준다
+sri, srj, sbi, sbj = -1, -1, -1, -1
+for i in range(N):
+    for j in range(M):
+        if board[i][j] == 'R':
+            sri, srj = i, j
+            board[i][j] = '.'
+        if board[i][j] == 'B':
+            sbi, sbj = i, j
+            board[i][j] = '.'
+
+direction_combination = []
+answer = 11
+find_direction_combination(0)
+
+if answer == 11:
+    answer = -1
+print(answer)
