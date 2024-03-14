@@ -1,0 +1,116 @@
+"""
+<풀이 과정>
+*총 풀이 시간 93분 : 구상(57분), 구현(23분), 디버깅(13분)
+오늘은 시간 초과에 걸리지 않고 많은 조건을 충족시키기 위해 구상에 시간을 많이 쏟았습니다.
+우선 조건의 수가 많았고 밑의 테스트 케이스 설명을 빨리 발견하지 못해 조건을 꼼꼼히 정리하는데
+많은 시간을 쏟았습니다. 또한 회전, 전치행령 만들기 등 연습한 파이썬 문법을 테스트 해보며 수도코드를
+작성하였습니다.
+
+구현은 평소 약하던 부분이었기 때문에 중간중간 print 해가며 진행하느라 수도 코드를 작성했음에도
+생각보다 많은 시간이 걸렸습니다. 또한 중간에 R 연산과 C 연산을 하나로 합칠 수 있다는 생각이 들어
+구상을 약간 변화시켜 구현했습니다.
+
+디버깅은 테스트 케이스를 확인하고 마지막 시간 조건을 정리하는데 할애했습니다. 테스트 케이스를 확인하며
+0으로 패딩된 곳을 버리지 못한다는 것을 알게됐습니다. 정렬 후 최대 길이가 기존의 길이보다 짧아질 수 
+있는데 이를 확인하지 못해 처음 행 값을 기준으로 삼았기 때문입니다. 이는 print해보며 확인할 수 있
+었습니다.
+
+또한 이는 운좋게 발견한 것인데 찾을 행과 열의값이 정렬 후 A 배열보다 커질 수 있어 인덱스 에러가
+발생할 수도 있다는 것입니다. 이는 디버깅 중 출력 조건을 살펴보다 알게 됐습니다. 오늘은 주어진
+조건은 확실히 정리하고 넘어갔지만 주어지지 않은 조건은 생각하지 못했습니다. 앞으로 범위가 주어지는
+것은 확정할 수 있다면 모두 범위 조건을 확정하고 넘어가야 할 것입니다.
+
+마지막으로 시간 조건의 에지케이스를 확인하는데 많은 시간을 쏟았습니다. 101초인지 100초인 지에 따라
+정답일 수도 아닐수도 있기 때문입니다. 어제 사다리 조작에서는 이를 제대로 확인하지 않았기 때문에
+오늘은 이 부분에 많은 시간을 쏟았습니다. 그리고 다행히 제가 생각한 대로 에지케이스가 나왔기 때문에
+오답 없이 한 번에 맞출 수 있었다고 생각합니다.
+
+<디버깅 포인트>
+1. 모든 범위 조건은 레인지를 확실하게 정하고 넘어가자
+1) 오늘 같은 경우 기존 행과 열보다 정렬 후 더 짧아질 수도 있는 점
+2) 찾는 값의 범위도 정렬 후보다 짧아질 수도 있다는 점
+
+<기억할만 한 점>
+1. 오늘 마침 강사님이 보내주셨던 파이썬 회전과 복사 문법을 정리했었는데 이를 활용한 문제가 나왔다.
+-> 오늘을 계기로 더 잘 알아놓자. 이차원 배열 복사는 아직 안해봐서 확인해봐야 한다
+
+2. 오늘 디버깅 포인트는 자세한 테스트 케이스가 없었다면 모두 걸렸을 것이다.
+모든 인덱스 조건은 확인할 수 있다면 레인지를 확정하고 구상하자
+"""
+
+def do_calc():
+    global board
+    board_len = len(board)
+    max_len = 0
+
+    #[1] 모든 행을 정렬한다
+    for i in range(board_len):
+        #1. 행 정렬
+        row = list(board[i])
+        row.sort()
+        #2. new_row 생성
+        number = -1
+        new_row = []
+        for row_numb in row:
+            if row_numb == 0:
+                continue
+            if row_numb != number:
+                new_row.append([row_numb, 1])
+                number = row_numb
+                continue
+            if row_numb == number:
+                new_row[-1][1] += 1
+        #3. new_row 정렬 (개수, 수의 크기)
+        new_row.sort(key = lambda x : (x[1], x[0]))
+        #4. 새로운 row 삽입
+        row = []
+        for element in new_row:
+            row.extend(element)
+        board[i] = row
+        #5. max_len 갱신
+        max_len = max(max_len, len(row))
+
+    #[2] max_len에 맞추어 0 패딩
+    for i in range(board_len):
+        row = board[i]
+        while len(row) < max_len:
+            row.append(0)
+        #100개 까지만 받는다
+        board[i] = row[:100]
+
+    return board_len, max_len
+
+
+R, C, K = map(int, input().split())
+#레인지는 1부터 시작한 것으로 입력받는다
+R -= 1
+C -= 1
+board = []
+for _ in range(3):
+    board.append(tuple(map(int, input().split())))
+
+is_found = False
+time = 0
+row_len = 3
+col_len = 3
+
+while time <= 100: # 생각해봐야하는 부분########
+    #[1] 조건 맞으면 종료
+    if 0 <= R < len(board) and 0 <= C < len(board[0]) and board[R][C] == K:
+        is_found = True
+        break
+
+    time += 1
+
+    #[2] 연산 수행
+    if row_len >= col_len:
+        row_len, col_len = do_calc()
+    else:
+        board = list(zip(*board))
+        col_len, row_len = do_calc()
+        board = list(zip(*board))
+
+if is_found:
+    print(time)
+else:
+    print(-1)
