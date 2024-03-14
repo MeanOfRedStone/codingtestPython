@@ -1,0 +1,123 @@
+"""
+<풀이 과정>
+* 총 풀이 시간 41분 - 구상(30분 추정) 구현 및 디버깅(11분 추정)
+오늘은 연구소3를 먼저 풀이하기로 결정했습니다. 두 문제를 자세히 읽어보니 연구소 3같은 경우
+제가 익숙한 백트래킹 + 너비우선탐색 이라고 생각했기 때문입니다.
+
+구상 과정에서는 큰 틀을 정하고 조건을 정확히 판단하는데 시간을 사용했던 것 같습니다.
+먼저 최소 시간의 정의입니다. 문제에서 최소시간이란 활성 + 비활성 모두 포함해 빈칸을 채우는데 걸리는 최소 시간을 찾는 것이었습니다.
+
+다음으로 초기 조건을 설정하는 것입니다. 활성 바이러스를 어디서 시작하는지 빨리 캐치하지 못해  이 부분을 정리하는데 시간을 할애했습니다.
+이후 구상한 대로 구현을 진행했고 테스트 케이스를 활용해 디버깅했습니다.
+1) 구상 때 초기에 이미 바이러스가 다 차있는 경우를 생각하지 못했기 때문에 테스트 케이스를 활용해 디버깅했습니다.
+2) 또한 구상에서 빈 칸을 모두 채우지 못한 경우도 생각했지만 구현 때 이를 실수로 누락한 부분을 찾아 디버깅했습니다.
+
+<디버깅 포인트>
+1. 극단의 경우 또 생각 안했다.
+2. 구상한 건 빼먹지 말자... 사다리 조작의 악몽...
+
+<기억할만 한 점>
+1. 극단의 경우 또 생각 안했다.
+2. 구상한 건 빼먹지 말자... 사다리 조작의 악몽...
+
+"""
+
+from collections import deque
+
+
+def find_viruses_combination(st, depth):
+    global answer
+    global viruses_visited
+    global viruses_combination
+
+    #[1] 종료 조건 M 개의 조합을 찾으면  최소 시간을 갱신해준다
+    if depth == M:
+        time = expand_viruses()
+        answer = min(answer, time)
+        return
+
+    #[2] 바이러스 조합 탐색
+    for v_idx in range(st, virus_cnt):
+        #1) 탐색 확인
+        if viruses_visited[v_idx] == 1:
+            continue
+        #2) 다음 조합에 넣어준고 방문 표시
+        viruses_combination.append(v_idx)
+        viruses_visited[v_idx] = 1
+        #3) 다음 방문
+        find_viruses_combination(v_idx, depth + 1)
+        #4) 백트래킹
+        viruses_visited[v_idx] = 0
+        viruses_combination.pop()
+
+
+def expand_viruses():
+    #[1] 바이러스 조합에서 정보를 가져와 큐에 넣고 방문 배열에 표시한다
+    queue = deque()
+    visited = [[0 for _ in range(N)]for _ in range(N)]
+    for v_idx in viruses_combination:
+        vr, vc = viruses[v_idx]
+        queue.append((vr, vc))
+        visited[vr][vc] = 1
+
+    left_vacant = vacant_cnt
+    #[2] 바이러스의 이동
+    while queue:
+        r, c = queue.popleft()
+        time = visited[r][c]
+
+        for dx, dy in ((0, 1), (1, 0), (0, -1), (-1, 0)):
+            nr, nc = r + dx, c + dy
+            #1. 레인지 체크
+            if nr < 0 or nr == N or nc < 0 or nc == N:
+                continue
+            #2. 방문 체크
+            if visited[nr][nc] != 0:
+                continue
+            #3. 벽 체크
+            if board[nr][nc] == 1:
+                continue
+            #4. 빈 칸인 경우 빈 칸수 감수
+            if board[nr][nc] == 0:
+                left_vacant -= 1
+            #1) 빈 칸이 0인경우 종료
+            if left_vacant == 0:
+                return time
+            #5. 다음 방문
+            queue.append((nr, nc))
+            visited[nr][nc] = time + 1
+
+    return N * N
+
+
+N, M = map(int, input().split())
+
+# 0 : 빈 칸 | 1 : 벽 | 2 : 비활성 바이러스
+board = []
+for _ in range(N):
+    board.append(list(map(int, input().split())))
+
+#[0] 바이러스 위치 찾아 기록 및 방문 배열 생성, 빈 칸 개수 기록
+viruses = []
+vacant_cnt = 0
+for i in range(N):
+    for j in range(N):
+        if board[i][j] == 0:
+            vacant_cnt += 1
+            continue
+        if board[i][j] == 2:
+            viruses.append((i, j))
+virus_cnt = len(viruses)
+viruses_visited = [0 for _ in range(virus_cnt)]
+
+answer = N * N
+viruses_combination = []
+#M 개의 바이러스 조합 찾고 최소 시간 찾는다
+if vacant_cnt != 0:
+    find_viruses_combination(0, 0)
+
+if answer == N * N:
+    answer = -1
+if vacant_cnt == 0:
+    answer = 0
+print(answer)
