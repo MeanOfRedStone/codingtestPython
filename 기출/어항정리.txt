@@ -1,0 +1,172 @@
+import sys
+sys.stdin = open("in.txt", "r")
+
+import math
+
+def print2(ar):
+    for x in ar:
+        print(x)
+    print()
+
+def add_fishes():
+    aquarium = fishes[0]
+    min_cnt = min(aquarium)
+    for i in range(len(aquarium)):
+        if aquarium[i] == min_cnt:
+            aquarium[i] += 1
+    fishes[0] = aquarium
+
+def add_aquarium():
+    global fishes
+    #1. 어항 쌓기
+    fishes[0]
+    aquarium = fishes[0]
+    new_aquarium = aquarium[:1]
+    aquarium = aquarium[1:]
+
+    fishes = [new_aquarium, aquarium]
+    print("한 칸")
+    print2(fishes)
+    # 2. 공중부양
+    # for _ in range(int(math.sqrt(N))):
+    #     new_fishes = list(map(list, zip(*fishes[::-1])))
+    #     fishes = new_fishes + [fishes[-1][len(new_fishes):]]
+    #     print("첫 공중부양중")
+    #     print2(fishes)
+    while True:
+        print("첫 공중부양 ")
+        print2(fishes)
+        new_fishes = list(map(list, zip(*fishes[::-1])))
+        print("뉴피시")
+        print2(new_fishes)
+        print("바닥 붙을 곳")
+        bottom = [fishes[-1][len(new_fishes):]]
+        print(bottom)
+        len_top = len(new_fishes) + 1
+        len_bot = len(bottom[0])
+        print("아래 남은 길이", len_bot)
+        if len_top > len_bot:
+            break
+        fishes = new_fishes + bottom
+    # if not fishes[-1]:
+    #     print("팝")
+    #     fishes.pop()
+    print("공중 부양 끝")
+    print2(fishes)
+
+
+def move_fish():
+    fish_lst = []
+    for i in range(len(fishes)):
+        row = fishes[i]
+        for j in range(len(row)):
+            fish_cnt = fishes[i][j]
+            for dx, dy in ((0, 1), (1, 0)):
+                ni, nj = i + dx, j + dy
+                if ni < 0 or ni >= len(fishes):
+                    continue
+                if nj < 0 or nj >= len(fishes[ni]):
+                    continue
+                n_fish_cnt = fishes[ni][nj]
+                diff = abs(fish_cnt - n_fish_cnt)
+                if diff < 5:
+                    continue
+                if fish_cnt < n_fish_cnt:
+                    fish_lst.append((i, j, diff // 5))
+                    fish_lst.append((ni, nj, -(diff//5)))
+                else:
+                    fish_lst.append((i, j, -(diff//5)))
+                    fish_lst.append((ni, nj, diff // 5))
+    print("움직일 고기들")
+    print(fish_lst)
+    for r, c, val in fish_lst:
+        fishes[r][c] += val
+        print("고기 이동")
+        print(fishes[r][c])
+        print2(fishes)
+
+
+def set_aquarium():
+    global fishes
+
+
+    new_fishes = []
+
+    for j in range(len(fishes[0])):
+        for i in range(len(fishes) - 1, -1, -1):
+            # print(i, j)
+            new_fishes.append(fishes[i][j])
+    # print(fishes[-1][len(fishes[0]):])
+    # exit()
+    new_fishes += fishes[-1][len(fishes[0]):]
+
+    fishes = [new_fishes]
+
+
+def rotate_aquarium():
+    global fishes
+
+    new_fishes = []
+    new_fishes.append(fishes[0][:N//2][::-1])
+    new_fishes.append(fishes[0][N//2:])
+    # print("new fishes")
+    # print(new_fishes)
+    top = [row[:N//4] for row in new_fishes]
+    # print("위 반")
+    # print(top)
+
+    if len(top[0]) != 1:
+        for _ in range(2):
+            top = list(map(list, zip(*top[::-1])))
+    else:
+        top = [top[-1]] + [top[-1]]
+    # print("회전 반")
+    # print(top)
+
+    bottom = [row[N//4:] for row in new_fishes]
+    # print("아래")
+    # print(bottom)
+    fishes = top + bottom
+    # print(fishes)
+
+
+# N : 상어가 가지고 있는 어항(처음에는 일렬로 시작한다)
+# K : 종료조건(물고기가 가장 많은 어항 - 물고기가 가장 작은 어항)
+N, K = map(int, input().split())
+# 어항에 들어있는 물고기의 수
+fishes = list(map(int, input().split()))
+fishes = [fishes]
+
+cnt = 1
+while True:
+    print(cnt,"회")
+    print(fishes)
+    add_fishes()
+    print("어항 정리")
+    print(fishes)
+    add_aquarium()
+    print("물고기 추가")
+    print2(fishes)
+    move_fish()
+    print("물고기 이동")
+    print2(fishes)
+    set_aquarium()
+    print("수족관 일자 배치")
+    print(fishes)
+    rotate_aquarium()
+    print("2차 공중 부양")
+    print2(fishes)
+    move_fish()
+    print("물고기 이동")
+    print2(fishes)
+    set_aquarium()
+    print("수족관 일자 배치")
+    print(fishes)
+    # exit()
+
+    if max(fishes[0]) - min(fishes[0]) <= K:
+        break
+    cnt += 1
+
+
+print(cnt)
